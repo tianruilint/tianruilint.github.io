@@ -219,11 +219,12 @@ function renderProfile() {
   const contactBtn = document.getElementById('hero-contact-btn'); // <<< (假设你给联系我按钮添加了 ID)
 
   if (heroTitle) heroTitle.textContent = profile.name;
-  if (heroSubtitle) heroSubtitle.textContent = profile.title; // <<< 更新 Hero 副标题
-  if (resumeBtn) {
-    resumeBtn.textContent = profile.resume.buttonText;
-    resumeBtn.href = resourceManager.getDocumentPath(profile.resume.downloadLink); 
-  }
+  if (heroSubtitle) heroSubtitle.textContent = profile.title;
+   if (resumeBtn && profile.resume) {
+       resumeBtn.textContent = profile.resume.buttonText;
+       // 如果简历文件也区分语言，这里可能需要动态路径
+       resumeBtn.href = resourceManager.getDocumentPath(profile.resume.downloadLink); // 使用 resourceManager 获取文档路径
+   }
   
   // 更新 "联系我" 按钮
   if (contactBtn && profile.ui.contactMeButton) { // <<< 更新 联系我 按钮
