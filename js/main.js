@@ -138,15 +138,6 @@ function initNavigation() {
     });
     mobileMenuBtn.hasClickListener = true; // 标记已绑定
 
-    // 点击菜单项后关闭菜单 (确保这个逻辑也在首次绑定时完成)
-    mobileMenuLinks.forEach(link => {
-      if (!link.hasCloseListener) {
-          link.addEventListener('click', () => {
-              mobileMenu.classList.remove('active');
-          });
-          link.hasCloseListener = true; // 标记已绑定
-      }
-    });
  }
   
   // 滚动监听
@@ -558,21 +549,59 @@ function renderFooter() {
 // 初始化交互功能
 function initInteractions() {
   // 保留平滑滚动逻辑
-  const scrollLinks = document.querySelectorAll('a[href^="#"]');
+  const scrollLinks = document.querySelectorAll(
+    '.nav-links a[href^="#"]:not([href="#"])'       // 桌面导航 (排除 href="#")
+    + ', #mobile-menu a[href^="#"]:not([href="#"])'  // 移动菜单 (排除 href="#")
+    + ', .footer-links a[href^="#"]:not([href="#"])' // 页脚链接 (排除 href="#")
+    + ', .hero-buttons a[href^="#contact"]'       // Hero 联系按钮
+    // 你可以根据需要添加其他特定区域的链接选择器
+  );
+
   scrollLinks.forEach(link => {
+    // 防止重复添加监听器 (如果 initInteractions 可能被多次调用)
+    if (link.hasSmoothScrollListener) {
+      return;
+    }
+
     link.addEventListener('click', (e) => {
-      e.preventDefault();
       const targetId = link.getAttribute('href');
-      if (targetId === '#') return;
+
+      // 确保 targetId 不是 null 且确实是 # 开头 (虽然选择器已处理)
+      if (!targetId || !targetId.startsWith('#') || targetId === '#') {
+        return;
+      }
+
+      // 阻止链接的默认跳转行为
+      e.preventDefault();
+      // *** 阻止事件向上冒泡 ***
+      e.stopPropagation();
+
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
+        const headerOffset = 70; // 与你的 CSS 中固定的 header 高度或偏移量一致
+        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - headerOffset;
+
         window.scrollTo({
-          top: targetElement.offsetTop - 70, // 保持导航栏高度偏移
+          top: offsetPosition,
           behavior: 'smooth'
         });
+
+        // 如果点击的是移动菜单中的链接，则关闭菜单
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu && mobileMenu.contains(link) && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+        }
+      } else {
+        console.warn(`Smooth scroll target element not found for selector: ${targetId}`);
       }
     });
+
+    link.hasSmoothScrollListener = true; // 标记已添加监听器
   });
-  
+
+  // 其他交互逻辑... (确保旧的表单提交逻辑已移除)
 }
+  
+
 
