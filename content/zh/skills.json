@@ -1,37 +1,37 @@
 [
   {
-    "name": "JavaScript",
+    "name": "NetEase NASL",
     "percentage": 90,
-    "description": "精通现代JavaScript，包括ES6+特性、异步编程和函数式编程"
+    "description": "精通网易CodeWave智能开发平台，可熟练借助该平台开发高质量的Web应用"
   },
   {
-    "name": "React",
-    "percentage": 85,
-    "description": "熟练使用React生态系统，包括Redux、React Router和各种hooks"
-  },
-  {
-    "name": "Node.js",
-    "percentage": 80,
-    "description": "构建高效的后端服务和API，使用Express和各种中间件"
-  },
-  {
-    "name": "TypeScript",
-    "percentage": 75,
-    "description": "在大型项目中应用TypeScript提高代码质量和可维护性"
-  },
-  {
-    "name": "用户界面/用户体验",
-    "percentage": 75,
-    "description": "设计直观且美观的用户界面，关注用户体验和可访问性"
-  },
-  {
-    "name": "DevOps",
+    "name": "Verilog",
     "percentage": 70,
-    "description": "熟悉CI/CD流程、Docker容器化和云服务部署"
+    "description": "熟练使用Verilog进行硬件描述和仿真，熟悉FPGA开发"
   },
   {
-    "name": "移动端开发",
-    "percentage": 65,
-    "description": "使用React Native和渐进式Web应用(PWA)开发移动应用"
+    "name": "Adobe Photoshop",
+    "percentage": 80,
+    "description": "熟练使用Photoshop进行图像处理和设计，包括图片编辑、合成和设计"
+  },
+  {
+    "name": "CapCut",
+    "percentage": 80,
+    "description": "熟练使用CapCut进行视频编辑和制作，包括剪辑、特效添加和音频处理"
+  },
+  {
+    "name": "MATLAB",
+    "percentage": 75,
+    "description": "熟练使用MATLAB进行数学建模、算法开发和数据分析"
+  },
+  {
+    "name": "PSIM",
+    "percentage": 70,
+    "description": "熟练使用PSIM进行电路仿真和设计，包括模拟电路和数字电路的仿真"
+  },
+  {
+    "name": "C",
+    "percentage": 75,
+    "description": "熟练使用C语言进行软件开发，包括系统编程和嵌入式开发"
   }
 ]

@@ -1,37 +1,37 @@
 [
   {
-    "name": "JavaScript",
+    "name": "NetEase NASL",
     "percentage": 90,
-    "description": "Proficient in modern JavaScript, including ES6+ features, asynchronous programming, and functional programming"
+    "description": "Proficient in NetEase CodeWave intelligent development platform, and can skillfully use the platform to develop high-quality Web applications"
   },
   {
-    "name": "React",
-    "percentage": 85,
-    "description": "Skilled in React ecosystem, including Redux, React Router, and various hooks"
-  },
-  {
-    "name": "Node.js",
-    "percentage": 80,
-    "description": "Building efficient backend services and APIs using Express and various middleware"
-  },
-  {
-    "name": "TypeScript",
-    "percentage": 75,
-    "description": "Applying TypeScript in large projects to improve code quality and maintainability"
-  },
-  {
-    "name": "UI/UX Design",
-    "percentage": 75,
-    "description": "Designing intuitive and beautiful user interfaces with focus on user experience and accessibility"
-  },
-  {
-    "name": "DevOps",
+    "name": "Verilog",
     "percentage": 70,
-    "description": "Familiar with CI/CD pipelines, Docker containerization, and cloud service deployment"
+    "description": "Proficient in using Verilog for hardware description and simulation, familiar with FPGA development"
   },
   {
-    "name": "Mobile Development",
-    "percentage": 65,
-    "description": "Developing mobile applications using React Native and Progressive Web Apps (PWA)"
+    "name": "Adobe Photoshop",
+    "percentage": 80,
+    "description": "Proficient in using Photoshop for image processing and design, including image editing, synthesis and design"
+  },
+  {
+    "name": "CapCut",
+    "percentage": 80,
+    "description": "Proficient in using CapCut for video editing and production, including editing, adding special effects and audio processing"
+  },
+  {
+    "name": "MATLAB",
+    "percentage": 75,
+    "description": "Proficient in using MATLAB for mathematical modeling, algorithm development, and data analysis"
+  },
+  {
+    "name": "PSIM",
+    "percentage": 70,
+    "description": "Proficient in using PSIM for circuit simulation and design, including simulation of analog circuits and digital circuits"
+  },
+  {
+    "name": "C",
+    "percentage": 75,
+    "description": "Proficient in using C language for software development, including system programming and embedded development"
   }
 ]
