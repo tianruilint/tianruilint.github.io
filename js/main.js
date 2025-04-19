@@ -445,71 +445,63 @@ function renderProjects() {
 
 // 渲染联系信息
 function renderContact() {
-  const contactSectionTitle = document.querySelector('#contact h2'); // <<< 选择 Contact 标题
-  const profile = configLoader.getConfig('profile'); // 需要 profile 来获取导航文本
-  if (contactSectionTitle && profile.navigation.contact) { // <<< 更新 Contact 标题
-     contactSectionTitle.textContent = profile.navigation.contact;
+  // --- 保留更新标题、联系信息和社交链接的代码 ---
+  const contactSectionTitle = document.querySelector('#contact h2');
+  const profile = configLoader.getConfig('profile');
+  if (contactSectionTitle && profile && profile.navigation && profile.navigation.contact) {
+    contactSectionTitle.textContent = profile.navigation.contact;
   }
-  // 获取个人资料配置
-  if (!profile || !profile.contact) return;
-  
-  // 更新联系信息
-  const emailElement = document.querySelector('.contact-email .contact-text');
-  const phoneElement = document.querySelector('.contact-phone .contact-text');
-  const locationElement = document.querySelector('.contact-location .contact-text');
-  
-  if (emailElement) emailElement.textContent = profile.contact.email;
-  if (phoneElement) phoneElement.textContent = profile.contact.phone;
-  if (locationElement) locationElement.textContent = profile.contact.location;
-  
-  // 更新社交链接
-  const socialLinks = document.querySelector('.social-links');
-  if (socialLinks && profile.contact.social) {
-    socialLinks.innerHTML = '';
-    
-    // 添加社交链接
-    Object.entries(profile.contact.social).forEach(([platform, url]) => {
-      if (!url) return;
-      
-      const socialLink = document.createElement('a');
-      socialLink.className = 'social-link';
-      socialLink.href = url;
-      socialLink.target = '_blank';
-      
-      // 根据平台设置图标
-      let icon = '';
-      switch (platform) {
-        case 'github':
-          icon = 'fab fa-github';
-          break;
-        case 'linkedin':
-          icon = 'fab fa-linkedin-in';
-          break;
-        case 'twitter':
-          icon = 'fab fa-twitter';
-          break;
-        case 'weixin':
-          icon = 'fab fa-weixin';
-          break;
-        default:
-          icon = 'fas fa-link';
-      }
-      
-      socialLink.innerHTML = `<i class="${icon}"></i>`;
-      socialLinks.appendChild(socialLink);
-    });
+
+  if (profile && profile.contact) {
+    const emailElement = document.querySelector('.contact-email .contact-text');
+    const phoneElement = document.querySelector('.contact-phone .contact-text');
+    const locationElement = document.querySelector('.contact-location .contact-text');
+    if (emailElement) emailElement.textContent = profile.contact.email;
+    if (phoneElement) phoneElement.textContent = profile.contact.phone;
+    if (locationElement) locationElement.textContent = profile.contact.location;
+
+    const socialLinks = document.querySelector('.social-links');
+    if (socialLinks && profile.contact.social) {
+      socialLinks.innerHTML = ''; // 清空以防重复添加
+      Object.entries(profile.contact.social).forEach(([platform, url]) => {
+        if (!url) return;
+        const socialLink = document.createElement('a');
+        socialLink.className = 'social-link';
+        socialLink.href = url;
+        socialLink.target = '_blank';
+        let icon = '';
+        switch (platform) {
+          case 'github': icon = 'fab fa-github'; break;
+          case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+          case 'twitter': icon = 'fab fa-twitter'; break;
+          case 'weixin': icon = 'fab fa-weixin'; break; // 修正了可能的拼写错误
+          default: icon = 'fas fa-link';
+        }
+        socialLink.innerHTML = `<i class="${icon}"></i>`;
+        socialLinks.appendChild(socialLink);
+      });
+    }
   }
-  
-  // 更新联系表单
-  const nameLabel = document.querySelector('label[for="name"]');
-  const emailLabel = document.querySelector('label[for="email"]');
-  const messageLabel = document.querySelector('label[for="message"]');
-  const submitBtn = document.querySelector('.contact-form button[type="submit"]');
-  
-  if (nameLabel) nameLabel.textContent = profile.ui.formLabels.name;
-  if (emailLabel) emailLabel.textContent = profile.ui.formLabels.email;
-  if (messageLabel) messageLabel.textContent = profile.ui.formLabels.message;
-  if (submitBtn) submitBtn.textContent = profile.ui.sendMessage;
+
+  const formContainer = document.querySelector('.contact-form');
+  if (!formContainer) {
+    console.error('Contact form container (.contact-form) not found.');
+    return;
+  }
+
+  const currentLanguage = languageManager.getCurrentLanguage();
+
+  // 定义 Google 表单的 iframe HTML (建议在 CSS 中控制 width/height 以实现响应式)
+  // 为了简单起见，暂时保留 width/height，但添加 style="width: 100%; max-width: 640px;"
+  const iframeZh = '<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd7U-72-ULCtF9LBjJuRT_zTTEyOlMmM_ZdaLZAB9HU4gb_SQ/viewform?embedded=true" style="width: 100%; max-width: 640px; height: 684px; display: block; margin: 0 auto;" frameborder="0" marginheight="0" marginwidth="0">正在加载…</iframe>';
+  const iframeEn = '<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScPmBtl5Lgo3BmtD2JAaFi2xy3BGBd4SeGS5J8lHqfD5Qa9Hw/viewform?embedded=true" style="width: 100%; max-width: 640px; height: 684px; display: block; margin: 0 auto;" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>';
+
+  // 根据当前语言设置 iframe
+  if (currentLanguage === 'zh') {
+    formContainer.innerHTML = iframeZh;
+  } else { // 默认为英文
+    formContainer.innerHTML = iframeEn;
+  }
 }
 
 function renderFooter() {
@@ -551,36 +543,22 @@ function renderFooter() {
 }
 // 初始化交互功能
 function initInteractions() {
-  // 平滑滚动
+  // 保留平滑滚动逻辑
   const scrollLinks = document.querySelectorAll('a[href^="#"]');
   scrollLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
-      
       const targetId = link.getAttribute('href');
       if (targetId === '#') return;
-      
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         window.scrollTo({
-          top: targetElement.offsetTop - 70,
+          top: targetElement.offsetTop - 70, // 保持导航栏高度偏移
           behavior: 'smooth'
         });
       }
     });
   });
   
-  // 联系表单提交
-  const contactForm = document.querySelector('.contact-form form');
-  if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      // 在实际应用中，这里应该发送表单数据到服务器
-      // 这里只是模拟提交成功
-      alert('表单提交成功！在实际应用中，这里会发送数据到服务器。');
-      contactForm.reset();
-    });
-  }
 }
 

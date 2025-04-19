@@ -568,6 +568,35 @@ border-bottom: none;
   animation: fadeInRight 1s ease;
 }
 
+.contact-form iframe {
+  width: 100%;             /* 让 iframe 宽度充满其容器 */
+  max-width: 640px;        /* 设置一个最大宽度，保持原始比例感 */
+  min-height: 684px;       /* 设置最小高度，防止内容被截断 */
+                           /* height 可以设为 auto 或具体值，但 min-height 更安全 */
+                           /* Google Form 高度可能变化，测试不同屏幕尺寸！*/
+  height: 700px;          /* 或者直接设置一个比原始值稍大的固定高度 */
+  display: block;          /* 避免下方出现奇怪的空隙 */
+  margin: 0 auto;          /* 如果容器比 max-width 宽，则居中 iframe */
+  border: none;            /* 移除 iframe 可能的边框 */
+  background-color: var(--bg-secondary); /* 设置背景色以防加载慢时透明 */
+}
+
+/* 针对不同屏幕尺寸调整高度 (示例) */
+@media (max-width: 768px) {
+  .contact-form iframe {
+    min-height: 750px;
+    height: 800px; /* 在较小屏幕上可能需要更高的高度 */
+    max-width: 100%; /* 在小屏幕上允许 iframe 使用全部宽度 */
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-form iframe {
+    min-height: 800px;
+    height: 850px; /* 在非常小的屏幕上可能需要更高 */
+  }
+}
+
 .form-group {
   margin-bottom: 1.5rem;
 }
