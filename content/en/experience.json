@@ -7,16 +7,10 @@
   "items": {
     "campus": [
       {
-        "title": "Student Union President",
-        "organization": "University Name",
-        "period": "2018 - 2022",
-        "description": "Organized campus activities, represented students in communications with school administrators, and improved campus life quality. Led a team to plan and execute multiple large-scale campus events, increasing student engagement and satisfaction."
-      },
-      {
-        "title": "Tech Club Leader",
-        "organization": "University Name",
-        "period": "2019 - 2021",
-        "description": "Organized technical lectures and workshops, helped students improve programming skills, and hosted annual hackathon competitions. Established a campus tech community that fostered technical exchange and innovative project development."
+        "title": "Lightweight Intelligent Hearing Detector Project Manager",
+        "organization": "Macau University of Science and Technology Project Team",
+        "period": "2022.10 - 2024.5",
+        "description": "Team Leadership: Conducted an in-depth analysis of the Healthy China planning report and selected the ear and hearing care niche market for thorough research. Initiated the project and successfully formed a 14-member professional team, assigning roles and responsibilities to each member. Led the initial development of a lightweight smart hearing screening device.\nProduct Development: Self-taught the Cocos Creator game engine; independently developed the pure-tone audiometry testing module and designed the internal structure of the product, logically integrating it with the overall product solution to enable professional-grade testing and evaluation."
       }
     ],
     "work": [
@@ -24,33 +18,27 @@
         "title": "Low-code teaching and research intern",
         "organization": "NetEase (Hangzhou) Network Co., Ltd.",
         "period": "2023.05 - 2023.09",
-        "description": "Low-Code Development: As the exam question author for the Qingzhou Low-Code Certification, independently designed and developed 8 complete platform-based case studies and created corresponding certification exam papers. The questions covered three certification levels: basic, intermediate, and advanced. Seven of the papers passed review and were successfully launched. Authored over 200 objective exam questions, thoroughly covering key knowledge points. Also established related SOPs to standardize the question development process.
-
-          Exam Grading: Responsible for grading certification exams and written tests for low-code engineer recruitment. Reviewed over 300 test papers, ensuring fair and accurate scoring. Successfully identified and reported 6 cases of plagiarism during the grading process, upholding exam integrity.
-
-          Course Review: Based on strict curriculum review standards, completed the review of over 1500 minutes of low-code instructional videos. Carefully collected and analyzed content issues, compiling detailed issue reports and improvement suggestions. Actively collaborated with the instructional team to promote content updates and quality enhancements."
+        "description": "Low-Code Development: As the exam question author for the Qingzhou Low-Code Certification, independently designed and developed 8 complete platform-based case studies and created corresponding certification exam papers. The questions covered three certification levels: basic, intermediate, and advanced. Seven of the papers passed review and were successfully launched. Authored over 200 objective exam questions, thoroughly covering key knowledge points. Also established related SOPs to standardize the question development process.\nExam Grading: Responsible for grading certification exams and written tests for low-code engineer recruitment. Reviewed over 300 test papers, ensuring fair and accurate scoring. Successfully identified and reported 6 cases of plagiarism during the grading process, upholding exam integrity.\nCourse Review: Based on strict curriculum review standards, completed the review of over 1500 minutes of low-code instructional videos. Carefully collected and analyzed content issues, compiling detailed issue reports and improvement suggestions. Actively collaborated with the instructional team to promote content updates and quality enhancements."
       },
       {
         "title": "Software Intern",
         "organization": "Zhejiang SUPCON Technology Co., Ltd.",
         "period": "2024.05 - 2024.09",
-        "description": "Selection Management System: As a software intern, was responsible for comprehensive testing, database import script development, and user manual writing for the Instrumentation Selection Management System. Designed and executed over 250 functional test cases to ensure system stability; developed data import scripts that improved efficiency by 60%; the user manual and SOP written became standard training documentation for the company. The project successfully passed review and was launched on schedule, receiving high praise from the project manager.
-
-          Instrumentation Testing: Responsible for testing newly developed radar level meters and mass flow meters, and for writing the corresponding test reports. Gained in-depth understanding of product principles, conducted on-site inspections of production processes, and participated in product manufacturing. The two professional test reports authored were recognized by the R&D and Quality Control departments and served as the basis for product release."
+        "description": "Selection Management System: As a software intern, was responsible for comprehensive testing, database import script development, and user manual writing for the Instrumentation Selection Management System. Designed and executed over 250 functional test cases to ensure system stability; developed data import scripts that improved efficiency by 60%; the user manual and SOP written became standard training documentation for the company. The project successfully passed review and was launched on schedule, receiving high praise from the project manager.\nInstrumentation Testing: Responsible for testing newly developed radar level meters and mass flow meters, and for writing the corresponding test reports. Gained in-depth understanding of product principles, conducted on-site inspections of production processes, and participated in product manufacturing. The two professional test reports authored were recognized by the R&D and Quality Control departments and served as the basis for product release."
       }
     ],
     "academic": [
       {
-        "title": "Bachelor of Computer Science",
-        "organization": "University Name",
-        "period": "2018 - 2022",
-        "description": "Majored in Computer Science with a focus on software engineering and human-computer interaction design. Participated in multiple research projects and published papers on user interface design."
+        "title": "Bachelor of Science - Electronic Information Engineering",
+        "organization": "Macau University of Science and Technology",
+        "period": "2022 - 2026",
+        "description": "Major in circuit CAD, signals and systems, digital circuits, circuit analysis, analog circuits, FPGA system design, communication networks, etc."
       },
       {
-        "title": "Master of Human-Computer Interaction",
-        "organization": "Graduate School Name",
-        "period": "2022 - 2023",
-        "description": "Researched user experience design and interaction patterns, developing innovative interface solutions. Completed a research paper on mobile application usability that received the department's best paper award."
+        "title": "Integrated Circuit Advanced Technology Summer School",
+        "organization": "Peking University Electronic Design Automation Institute",
+        "period": "2024 - 2024",
+        "description": "Engaged in discussions across multiple topics including cutting-edge device fabrication processes, front-end digital circuit EDA, back-end digital circuit EDA, advanced research in EDA, and new computing paradigms (architecture and circuits), gaining deep insights into the forefront of integrated circuit design and manufacturing technologies."
       }
     ]
   }
