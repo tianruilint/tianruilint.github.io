@@ -21,16 +21,22 @@
     ],
     "work": [
       {
-        "title": "Senior Frontend Developer",
-        "organization": "Tech Company",
-        "period": "2022 - Present",
-        "description": "Responsible for developing and maintaining the company's core products, building high-performance user interfaces using React and TypeScript. Optimized application performance, improved user experience, and participated in the design and implementation of several key features."
+        "title": "Low-code teaching and research intern",
+        "organization": "NetEase (Hangzhou) Network Co., Ltd.",
+        "period": "2023.05 - 2023.09",
+        "description": "Low-Code Development: As the exam question author for the Qingzhou Low-Code Certification, independently designed and developed 8 complete platform-based case studies and created corresponding certification exam papers. The questions covered three certification levels: basic, intermediate, and advanced. Seven of the papers passed review and were successfully launched. Authored over 200 objective exam questions, thoroughly covering key knowledge points. Also established related SOPs to standardize the question development process.
+
+          Exam Grading: Responsible for grading certification exams and written tests for low-code engineer recruitment. Reviewed over 300 test papers, ensuring fair and accurate scoring. Successfully identified and reported 6 cases of plagiarism during the grading process, upholding exam integrity.
+
+          Course Review: Based on strict curriculum review standards, completed the review of over 1500 minutes of low-code instructional videos. Carefully collected and analyzed content issues, compiling detailed issue reports and improvement suggestions. Actively collaborated with the instructional team to promote content updates and quality enhancements."
       },
       {
-        "title": "Frontend Developer",
-        "organization": "Startup Company",
-        "period": "2020 - 2022",
-        "description": "Participated in designing and developing the company's websites and applications, optimizing user experience and interface design. Built the company's frontend architecture from scratch, implementing responsive design and cross-platform compatibility."
+        "title": "Software Intern",
+        "organization": "Zhejiang SUPCON Technology Co., Ltd.",
+        "period": "2024.05 - 2024.09",
+        "description": "Selection Management System: As a software intern, was responsible for comprehensive testing, database import script development, and user manual writing for the Instrumentation Selection Management System. Designed and executed over 250 functional test cases to ensure system stability; developed data import scripts that improved efficiency by 60%; the user manual and SOP written became standard training documentation for the company. The project successfully passed review and was launched on schedule, receiving high praise from the project manager.
+
+          Instrumentation Testing: Responsible for testing newly developed radar level meters and mass flow meters, and for writing the corresponding test reports. Gained in-depth understanding of product principles, conducted on-site inspections of production processes, and participated in product manufacturing. The two professional test reports authored were recognized by the R&D and Quality Control departments and served as the basis for product release."
       }
     ],
     "academic": [
