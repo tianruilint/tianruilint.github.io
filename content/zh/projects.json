@@ -7,14 +7,14 @@
   },
   "items": [
     {
-      "title": "响应式网站模板",
+      "title": "个人响应式网站模板",
       "category": "web",
       "description": "一个现代化的响应式网站模板，适用于个人和企业网站。采用最新的HTML5和CSS3技术，确保在各种设备上都有出色的显示效果。",
-      "image": "./resources/images/projects/responsive-template.jpg",
+      "image": "./resources/images/projects/Personal_Web_image.jpg",
       "tags": ["HTML", "CSS", "JavaScript"],
       "links": {
-        "github": "https://github.com/yourusername/responsive-template",
-        "demo": "https://yourusername.github.io/responsive-template"
+        "github": "https://github.com/tianruilint/tianruilint.github.io.git",
+        "demo": "https://www.youtube.com/watch?v=-YxBow8c4Mc&list=PLT2YCO1BCLhsIl_fZffTguxXsAOKVC07M&index=9"
       }
     },
     {
