@@ -277,6 +277,8 @@ border-bottom: none;
   color: var(--text-primary);
   font-size: 1.5rem;
   cursor: pointer;
+  position: relative; /* 使得 z-index 生效 */
+  z-index: 1001;      /* 确保按钮在隐藏的菜单层之上，以便始终可点击 */
 }
 
 /* 英雄部分 */
@@ -807,14 +809,28 @@ footer {
     z-index: 999;
     transform: translateY(-100%);
     opacity: 0;
-    transition: all 0.3s;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s linear 0.3s;
   }
   
   .mobile-menu.active {
+    /* --- 核心修改：恢复可见性和交互 --- */
     transform: translateY(0);
     opacity: 1;
+    visibility: visible;         /* 添加：使其可见 */
+    pointer-events: auto;          /* 添加：允许交互 */
+    transition-delay: 0s;          /* 添加：立即应用 visibility */
+    /* transition: transform 0.3s ease, opacity 0.3s ease; */ /* 可以保留原来的，或者像上面分开写 */
   }
   
+  header {
+    /* ... */
+    position: fixed; /* 确保是 positioned */
+    z-index: 1000;   /* 例如，确保页眉在内容之上 */
+    background-color: var(--header-bg); /* 确保有背景色 */
+  }
+
   .mobile-menu a {
     display: block;
     padding: 0.75rem 0;
