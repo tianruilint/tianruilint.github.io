@@ -281,36 +281,61 @@ border-bottom: none;
 
 /* 英雄部分 */
 .hero {
-  height: 100vh;
-  display: flex;
+  display: flex; /* 保持 flex 布局 */
   align-items: center;
-  background-color: var(--bg-primary);
-  padding-top: 60px; /* 为固定导航腾出空间 */
+  min-height: 100vh; /* 使用 min-height 保证内容过多时也能显示 */
+  height: auto; /* 覆盖之前的固定 height */
+  padding-top: 80px; /* 稍微增加一点顶部空间 */
+  padding-bottom: 60px; /* 增加底部空间 */
+}
+
+.hero .hero-container {
+  display: flex;           /* 使用 flex 让文本和图片并排 */
+  align-items: center;     /* 垂直居中对齐 */
+  justify-content: space-between; /* 两端对齐（或用 space-around, center）*/
+  gap: 3rem;               /* 文本和图片之间的间距 */
+  width: 100%;
 }
 
 .hero-content {
-  max-width: 800px;
+  flex: 1;                 /* 允许文本区域扩展 */
+  max-width: 600px;        /* 限制文本区域最大宽度 */
+  animation: fadeInUp 1s ease; /* 保留现有动画 */
 }
 
-.hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  animation: fadeInUp 1s ease;
-}
-
-.hero p {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
-  color: var(--text-secondary);
+.hero h1 { 
   animation: fadeInUp 1s ease 0.2s;
+  animation-fill-mode: both; 
+}
+
+.hero p { 
+  animation: fadeInUp 1s ease 0.4s;
+  animation-fill-mode: both; 
+}
+
+.hero .hero-buttons { 
+  animation: fadeInUp 1s ease 0.6s; 
   animation-fill-mode: both;
 }
 
-.hero-buttons {
-  display: flex;
-  gap: 1rem;
-  animation: fadeInUp 1s ease 0.4s;
+.hero-image {
+  flex-shrink: 0;         /* 防止图片容器被压缩 */
+  width: 280px;           /* 设置图片区域的宽度 */
+  height: 280px;          /* 设置图片区域的高度 */
+  animation: fadeInRight 1s ease 0.8s; /* 给图片添加动画 (可选) */
   animation-fill-mode: both;
+  position: relative; /* 用于可能的装饰元素 */
+}
+
+/* 图片本身样式 */
+.hero-image img#profile-pic {
+  display: block;         /* 移除图片下方的空隙 */
+  width: 100%;            /* 图片宽度充满容器 */
+  height: 100%;           /* 图片高度充满容器 */
+  object-fit: cover;      /* 裁剪图片以适应容器，不变形 */
+  border-radius: 50%;     /* ***核心：设置为圆形*** */
+  border: 6px solid var(--bg-secondary); /* 可选：添加边框 */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 可选：添加阴影 */
 }
 
 /* 关于部分 */
@@ -708,6 +733,11 @@ footer {
 
 /* 响应式设计 */
 @media (max-width: 992px) {
+  .hero-image {
+    width: 240px;
+    height: 240px;
+  }
+
   .about-content {
     grid-template-columns: 1fr;
   }
@@ -719,6 +749,32 @@ footer {
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding-top: 100px; /* 增加移动端顶部距离 */
+    text-align: center; /* 文本居中 */
+ }
+ .hero .hero-container {
+   flex-direction: column-reverse; /* 图片在上，文本在下 */
+   gap: 2rem;
+ }
+ .hero-content {
+   max-width: 100%; /* 文本宽度占满 */
+ }
+  .hero-buttons {
+     justify-content: center; /* 按钮居中 */
+  }
+ .hero-image {
+   width: 200px; /* 移动端图片尺寸减小 */
+   height: 200px;
+   margin-bottom: 1.5rem; /* 图片和文本之间的距离 */
+   /* 可以调整或移除动画 */
+   animation: fadeInUp 1s ease 0.8s; /* 改为从下方滑入 */
+   animation-fill-mode: both;
+ }
+  .hero-image img#profile-pic {
+      border-width: 4px; /* 减小边框 */
+  }
+
   h1 {
     font-size: 2rem;
   }

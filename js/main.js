@@ -201,6 +201,7 @@ function renderContent() {
 function renderProfile() {
   // 获取个人资料配置
   const profile = configLoader.getConfig('profile');
+  if (!profile) return;
 
   // 更新标题
   document.title = profile.name;
@@ -221,7 +222,7 @@ function renderProfile() {
   if (heroSubtitle) heroSubtitle.textContent = profile.title; // <<< 更新 Hero 副标题
   if (resumeBtn) {
     resumeBtn.textContent = profile.resume.buttonText;
-    resumeBtn.href = profile.resume.downloadLink; // 确保链接也可能需要更新？（如果不同语言简历不同）
+    resumeBtn.href = resourceManager.getDocumentPath(profile.resume.downloadLink); 
   }
   
   // 更新 "联系我" 按钮
@@ -229,6 +230,18 @@ function renderProfile() {
      contactBtn.textContent = profile.ui.contactMeButton;
   }
   
+  const profileImageElement = document.getElementById('profile-pic');
+  if (profileImageElement) {
+    // 从配置获取图片文件名 (例如 "avatar.jpg")
+    const imageName = profile.image;
+    // 使用 resourceManager 获取完整的、安全的图片路径
+    const imagePath = resourceManager.getProfileImagePath(imageName);
+
+    profileImageElement.src = imagePath; // 设置图片源
+    profileImageElement.alt = `${profile.name || 'User'}'s profile picture`; // 设置 alt 文本
+  }
+
+
   // 更新关于部分
   const aboutSectionTitle = document.querySelector('#about h2'); // <<< 选择 About 标题
   const aboutIntro = document.querySelector('#about .about-text p:first-child');
