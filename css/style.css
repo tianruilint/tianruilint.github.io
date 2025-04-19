@@ -238,6 +238,38 @@ header {
   background-color: var(--border-color);
 }
 
+.mobile-menu {
+  display: none; /* 默认在桌面端隐藏 */
+  /* 可以将一些通用样式移到这里，如果它们在移动端也适用 */
+  position: fixed;
+  top: 60px; /* 确保与 header 高度匹配 */
+  left: 0;
+  width: 100%;
+  background-color: var(--bg-primary);
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* 建议分开写 transition */
+}
+
+.mobile-menu.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.mobile-menu a {
+display: block;
+padding: 0.75rem 0;
+border-bottom: 1px solid var(--border-color);
+color: var(--text-primary); /* 确保链接颜色正确 */
+}
+
+.mobile-menu a:last-child {
+border-bottom: none;
+}
+
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -642,38 +674,6 @@ footer {
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-.mobile-menu {
-  display: none; /* 默认在桌面端隐藏 */
-  /* 可以将一些通用样式移到这里，如果它们在移动端也适用 */
-  position: fixed;
-  top: 60px; /* 确保与 header 高度匹配 */
-  left: 0;
-  width: 100%;
-  background-color: var(--bg-primary);
-  padding: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease; /* 建议分开写 transition */
-}
-
-.mobile-menu.active {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.mobile-menu a {
-display: block;
-padding: 0.75rem 0;
-border-bottom: 1px solid var(--border-color);
-color: var(--text-primary); /* 确保链接颜色正确 */
-}
-
-.mobile-menu a:last-child {
-border-bottom: none;
 }
 
 /* 响应式设计 */
