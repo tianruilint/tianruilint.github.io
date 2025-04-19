@@ -514,8 +514,9 @@ border-bottom: none;
 /* 联系部分 */
 .contact-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr; /* 保持两列布局 */
   gap: 2rem;
+  align-items: center; /* 新增：使网格项（contact-info 和 contact-form）在垂直方向上居中 */
 }
 
 .contact-info {
@@ -713,6 +714,7 @@ footer {
   
   .contact-container {
     grid-template-columns: 1fr;
+    align-items: start;
   }
 }
 
