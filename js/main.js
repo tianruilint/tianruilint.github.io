@@ -133,17 +133,16 @@ function initNavigation() {
   const mobileMenu = document.getElementById('mobile-menu');
   
   if (mobileMenuBtn && mobileMenu && !mobileMenuBtn.hasClickListener) {
-
-    mobileMenuLinks.forEach(link => {
-      if (!link.hasCloseListener) {
-          link.addEventListener('click', () => {
-              mobileMenu.classList.remove('active');
-          });
-          link.hasCloseListener = true;
-      }
+    console.log("Attaching listener to mobile menu button."); // 添加日志，确认监听器是否附加
+    mobileMenuBtn.addEventListener('click', (event) => {
+       // 可选：阻止冒泡，以防万一按钮在某个也监听点击的容器内
+       event.stopPropagation();
+       console.log("Mobile menu button clicked!"); // 添加日志，确认点击是否触发
+       mobileMenu.classList.toggle('active');
+       console.log("Mobile menu class toggled:", mobileMenu.classList.contains('active')); // 查看状态
     });
-
- }
+    mobileMenuBtn.hasClickListener = true; // 标记已绑定
+  }
   
   // 滚动监听
   if (!window.hasScrollListener) { // 简单标记避免重复绑定
