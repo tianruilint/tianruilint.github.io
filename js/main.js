@@ -362,44 +362,47 @@ function renderProjects() {
   
     // 1. 更新 Footer Logo
     const footerLogo = document.querySelector('.footer-logo');
-    if (footerLogo) { // 安全检查
+    if (footerLogo) {
       footerLogo.textContent = profile.name;
     }
   
     // 2. 更新 Footer Links
     const footerLinks = document.querySelectorAll('.footer-links a');
     footerLinks.forEach(link => {
-      const href = link.getAttribute('href');
+      const href = link.getAttribute('href'); // 例如 "#about"
       if (href && href.startsWith('#')) {
-        const section = href.substring(1);
-        // 安全检查：确保 navigation 和 section 键存在
+        const section = href.substring(1); // 例如 "about"
+        // 确保 profile.navigation 和对应的 section key 存在
         if (profile.navigation && profile.navigation[section]) {
           link.textContent = profile.navigation[section];
         }
       }
     });
   
-    // 3. 更新 Footer Social Links
+    // 3. 更新 Footer Social Links (复用 renderContact 中的逻辑)
     const footerSocialContainer = document.querySelector('.footer-social');
-    // 安全检查：确保 contact 和 social 存在
+    // 确保 profile.contact 和 profile.contact.social 存在
     if (footerSocialContainer && profile.contact && profile.contact.social) {
-      footerSocialContainer.innerHTML = '';
+      footerSocialContainer.innerHTML = ''; // 清空现有图标
   
       Object.entries(profile.contact.social).forEach(([platform, url]) => {
-        if (!url) return;
+        if (!url) return; // 如果 URL 为空则跳过
   
         const socialLink = document.createElement('a');
-        socialLink.className = 'social-link footer-social-link';
+        // 最好给页脚社交链接添加特定类名以区分样式，但这里暂时复用 .social-link
+        socialLink.className = 'social-link footer-social-link'; // 添加一个特定类
         socialLink.href = url;
         socialLink.target = '_blank';
-        socialLink.setAttribute('aria-label', platform);
+        socialLink.setAttribute('aria-label', platform); // 提高可访问性
   
+        // 根据平台设置图标 (同 renderContact)
         let icon = '';
-        switch (platform.toLowerCase()) {
+        switch (platform.toLowerCase()) { // 使用 toLowerCase 增加兼容性
           case 'github': icon = 'fab fa-github'; break;
           case 'linkedin': icon = 'fab fa-linkedin-in'; break;
           case 'twitter': icon = 'fab fa-twitter'; break;
           case 'weixin': icon = 'fab fa-weixin'; break;
+          // 可根据需要添加更多平台
           default: icon = 'fas fa-link';
         }
   
@@ -410,9 +413,9 @@ function renderProjects() {
   
     // 4. 更新 Copyright
     const copyrightElement = document.querySelector('.copyright');
-    // 安全检查：确保 ui 和 copyright 键存在
+    // 确保 profile.ui 和 profile.ui.copyright 存在
     if (copyrightElement && profile.ui && profile.ui.copyright) {
-      const year = new Date().getFullYear();
+      const year = new Date().getFullYear(); // 动态获取当前年份
       copyrightElement.textContent = `© ${year} ${profile.name}. ${profile.ui.copyright}`;
     }
   }
