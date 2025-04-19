@@ -9,67 +9,34 @@
     {
       "title": "个人响应式网站模板",
       "category": "web",
-      "description": "一个现代化的响应式网站模板，适用于个人和企业网站。采用最新的HTML5和CSS3技术，确保在各种设备上都有出色的显示效果。",
-      "image": "./resources/images/projects/Personal_Web_image.jpg",
+      "description": "一个现代化的响应式网站模板, 适用于个人和企业网站。采用最新的HTML5和CSS3技术, 确保在各种设备上都有出色的显示效果。",
+      "image": "./resources/images/projects/Personal_Web_image.png",
       "tags": ["HTML", "CSS", "JavaScript"],
       "links": {
         "github": "https://github.com/tianruilint/tianruilint.github.io.git",
-        "demo": "https://www.youtube.com/watch?v=-YxBow8c4Mc&list=PLT2YCO1BCLhsIl_fZffTguxXsAOKVC07M&index=9"
+        "demo": "https://tianruilint.github.io/"
       }
     },
     {
-      "title": "任务管理应用",
-      "category": "mobile",
-      "description": "一个简洁高效的任务管理应用，帮助用户组织日常工作和生活。支持任务分类、优先级设置、截止日期提醒等功能。",
-      "image": "./resources/images/projects/task-manager.jpg",
-      "tags": ["React Native", "Firebase"],
-      "links": {
-        "github": "https://github.com/yourusername/task-manager",
-        "demo": "https://yourusername.github.io/task-manager"
-      }
-    },
-    {
-      "title": "UI组件库",
+      "title": "基于FPGA的VGA贪吃蛇游戏",
       "category": "design",
-      "description": "一套现代化的UI组件库，包含多种常用界面元素。设计风格统一，易于集成到各种Web项目中，提高开发效率。",
-      "image": "./resources/images/projects/ui-library.jpg",
-      "tags": ["Figma", "UI/UX"],
+      "description": "一个基于FPGA的VGA贪吃蛇游戏, 使用Verilog语言编写。该项目展示了如何在硬件平台上实现简单的图形界面和用户交互。",
+      "image": "./resources/images/projects/Snake_image.jpg",
+      "tags": ["FPGA", "Verilog", "VGA"],
       "links": {
-        "github": "https://github.com/yourusername/ui-library",
-        "demo": "https://yourusername.github.io/ui-library"
+        "github": "https://github.com/tianruilint/Course_Project_SnakePRO",
+        "demo": "https://youtu.be/-YxBow8c4Mc"
       }
     },
     {
-      "title": "电子商务平台",
-      "category": "web",
-      "description": "一个功能完善的电子商务平台，支持产品展示、购物车和支付功能。采用现代化的技术栈，提供流畅的用户体验。",
-      "image": "./resources/images/projects/ecommerce.jpg",
-      "tags": ["React", "Node.js", "MongoDB"],
-      "links": {
-        "github": "https://github.com/yourusername/ecommerce",
-        "demo": "https://yourusername.github.io/ecommerce"
-      }
-    },
-    {
-      "title": "天气预报应用",
-      "category": "mobile",
-      "description": "一个实时天气预报应用，提供当前天气状况和未来几天的预报。支持多城市切换，显示温度、湿度、风速等详细信息。",
-      "image": "./resources/images/projects/weather-app.jpg",
-      "tags": ["React", "Weather API"],
-      "links": {
-        "github": "https://github.com/yourusername/weather-app",
-        "demo": "https://yourusername.github.io/weather-app"
-      }
-    },
-    {
-      "title": "品牌设计系统",
+      "title": "基于MATLAB的双域数字信号处理-视频增强",
       "category": "design",
-      "description": "为某初创公司设计的完整品牌系统，包括标志、配色方案、字体选择和应用指南。建立了一套一致的视觉语言。",
-      "image": "./resources/images/projects/brand-system.jpg",
-      "tags": ["Branding", "Illustrator", "Design System"],
+      "description": "一个基于MATLAB的双域数字信号处理项目, 专注于视频增强。该项目利用双域技术提升视频质量, 包括去噪和锐化等操作。",
+      "image": "./resources/images/projects/MATLAB_two_domain.png",
+      "tags": ["MATLAB", "DSP"],
       "links": {
-        "github": "https://github.com/yourusername/brand-system",
-        "demo": "https://yourusername.github.io/brand-system"
+        "github": "https://github.com/tianruilint/Video_Enhancement_DSP.git",
+        "demo": "https://youtu.be/s-xAqbCbOAA"
       }
     }
   ]
