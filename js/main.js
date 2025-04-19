@@ -132,11 +132,16 @@ function initNavigation() {
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
   const mobileMenu = document.getElementById('mobile-menu');
   
-  if (mobileMenuBtn && mobileMenu && !mobileMenuBtn.hasClickListener) { // 简单标记避免重复绑定
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('active');
+  if (mobileMenuBtn && mobileMenu && !mobileMenuBtn.hasClickListener) {
+
+    mobileMenuLinks.forEach(link => {
+      if (!link.hasCloseListener) {
+          link.addEventListener('click', () => {
+              mobileMenu.classList.remove('active');
+          });
+          link.hasCloseListener = true;
+      }
     });
-    mobileMenuBtn.hasClickListener = true; // 标记已绑定
 
  }
   
