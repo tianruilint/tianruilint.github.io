@@ -1,0 +1,51 @@
+{
+  "categories": {
+    "campus": "Campus Experience",
+    "work": "Work Experience",
+    "academic": "Academic Experience"
+  },
+  "items": {
+    "campus": [
+      {
+        "title": "Student Union President",
+        "organization": "University Name",
+        "period": "2018 - 2022",
+        "description": "Organized campus activities, represented students in communications with school administrators, and improved campus life quality. Led a team to plan and execute multiple large-scale campus events, increasing student engagement and satisfaction."
+      },
+      {
+        "title": "Tech Club Leader",
+        "organization": "University Name",
+        "period": "2019 - 2021",
+        "description": "Organized technical lectures and workshops, helped students improve programming skills, and hosted annual hackathon competitions. Established a campus tech community that fostered technical exchange and innovative project development."
+      }
+    ],
+    "work": [
+      {
+        "title": "Senior Frontend Developer",
+        "organization": "Tech Company",
+        "period": "2022 - Present",
+        "description": "Responsible for developing and maintaining the company's core products, building high-performance user interfaces using React and TypeScript. Optimized application performance, improved user experience, and participated in the design and implementation of several key features."
+      },
+      {
+        "title": "Frontend Developer",
+        "organization": "Startup Company",
+        "period": "2020 - 2022",
+        "description": "Participated in designing and developing the company's websites and applications, optimizing user experience and interface design. Built the company's frontend architecture from scratch, implementing responsive design and cross-platform compatibility."
+      }
+    ],
+    "academic": [
+      {
+        "title": "Bachelor of Computer Science",
+        "organization": "University Name",
+        "period": "2018 - 2022",
+        "description": "Majored in Computer Science with a focus on software engineering and human-computer interaction design. Participated in multiple research projects and published papers on user interface design."
+      },
+      {
+        "title": "Master of Human-Computer Interaction",
+        "organization": "Graduate School Name",
+        "period": "2022 - 2023",
+        "description": "Researched user experience design and interaction patterns, developing innovative interface solutions. Completed a research paper on mobile application usability that received the department's best paper award."
+      }
+    ]
+  }
+}

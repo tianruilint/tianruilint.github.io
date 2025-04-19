@@ -1,0 +1,37 @@
+[
+  {
+    "name": "JavaScript",
+    "percentage": 90,
+    "description": "Proficient in modern JavaScript, including ES6+ features, asynchronous programming, and functional programming"
+  },
+  {
+    "name": "React",
+    "percentage": 85,
+    "description": "Skilled in React ecosystem, including Redux, React Router, and various hooks"
+  },
+  {
+    "name": "Node.js",
+    "percentage": 80,
+    "description": "Building efficient backend services and APIs using Express and various middleware"
+  },
+  {
+    "name": "TypeScript",
+    "percentage": 75,
+    "description": "Applying TypeScript in large projects to improve code quality and maintainability"
+  },
+  {
+    "name": "UI/UX Design",
+    "percentage": 75,
+    "description": "Designing intuitive and beautiful user interfaces with focus on user experience and accessibility"
+  },
+  {
+    "name": "DevOps",
+    "percentage": 70,
+    "description": "Familiar with CI/CD pipelines, Docker containerization, and cloud service deployment"
+  },
+  {
+    "name": "Mobile Development",
+    "percentage": 65,
+    "description": "Developing mobile applications using React Native and Progressive Web Apps (PWA)"
+  }
+]

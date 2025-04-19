@@ -1,0 +1,37 @@
+[
+  {
+    "name": "JavaScript",
+    "percentage": 90,
+    "description": "精通现代JavaScript，包括ES6+特性、异步编程和函数式编程"
+  },
+  {
+    "name": "React",
+    "percentage": 85,
+    "description": "熟练使用React生态系统，包括Redux、React Router和各种hooks"
+  },
+  {
+    "name": "Node.js",
+    "percentage": 80,
+    "description": "构建高效的后端服务和API，使用Express和各种中间件"
+  },
+  {
+    "name": "TypeScript",
+    "percentage": 75,
+    "description": "在大型项目中应用TypeScript提高代码质量和可维护性"
+  },
+  {
+    "name": "用户界面/用户体验",
+    "percentage": 75,
+    "description": "设计直观且美观的用户界面，关注用户体验和可访问性"
+  },
+  {
+    "name": "DevOps",
+    "percentage": 70,
+    "description": "熟悉CI/CD流程、Docker容器化和云服务部署"
+  },
+  {
+    "name": "移动端开发",
+    "percentage": 65,
+    "description": "使用React Native和渐进式Web应用(PWA)开发移动应用"
+  }
+]

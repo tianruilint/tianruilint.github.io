@@ -1,213 +1,401 @@
-// 主要JavaScript功能
+// 主脚本文件 - 负责网站的交互功能
+import languageManager from './language-manager.js';
+import configLoader from './config-loader.js';
+import resourceManager from './resource-manager.js';
 
-// DOM元素加载完成后执行
-document.addEventListener('DOMContentLoaded', function() {
-  // 设置当前年份
-  document.getElementById('current-year').textContent = new Date().getFullYear();
-  
-  // 导航菜单高亮
-  highlightNavigation();
-  
-  // 移动端菜单切换
-  setupMobileMenu();
-  
-  // 主题切换
-  setupThemeToggle();
-  
-  // 语言切换
-  setupLanguageToggle();
-  
-  // 经历标签页切换
-  setupTabs();
-  
-  // 项目筛选
-  setupProjectFilters();
-  
-  // 联系表单处理
-  setupContactForm();
-  
-  // 滚动监听
-  setupScrollListener();
+// DOM 加载完成后执行
+document.addEventListener('DOMContentLoaded', () => {
+  // 初始化网站
+  initWebsite();
 });
 
-// 导航菜单高亮
-function highlightNavigation() {
-  const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('#nav ul li a');
-  
-  window.addEventListener('scroll', function() {
-    let current = '';
+// 初始化网站
+async function initWebsite() {
+  // 等待配置加载完成
+  configLoader.addLoadListener(() => {
+    // 初始化主题
+    initTheme();
     
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
-        current = section.getAttribute('id');
-      }
-    });
+    // 初始化语言切换
+    initLanguageSwitch();
     
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === `#${current}`) {
-        link.classList.add('active');
-      }
-    });
+    // 初始化导航
+    initNavigation();
+    
+    // 渲染各部分内容
+    renderContent();
+    
+    // 初始化交互功能
+    initInteractions();
+    
+    // 显示网站内容（移除加载状态）
+    document.body.classList.remove('loading');
+    document.body.classList.add('loaded');
   });
 }
 
-// 移动端菜单切换
-function setupMobileMenu() {
-  const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-  const nav = document.getElementById('nav');
+// 初始化主题
+function initTheme() {
+  // 获取主题切换按钮
+  const themeSwitch = document.getElementById('theme-switch');
+  if (!themeSwitch) return;
   
-  if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', function() {
-      nav.classList.toggle('active');
-      
-      // 切换图标
-      const icon = this.querySelector('i');
-      if (icon.classList.contains('fa-bars')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-      } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-      }
+  // 从本地存储获取主题设置
+  const savedTheme = localStorage.getItem('theme');
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  // 设置初始主题
+  let currentTheme = savedTheme;
+  if (!currentTheme) {
+    currentTheme = prefersDarkScheme ? 'dark' : 'light';
+  }
+  
+  // 应用主题
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  // 更新主题切换按钮文本
+  updateThemeSwitchText(currentTheme);
+  
+  // 添加主题切换事件
+  themeSwitch.addEventListener('click', () => {
+    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeSwitchText(newTheme);
+  });
+}
+
+// 更新主题切换按钮文本
+function updateThemeSwitchText(theme) {
+  const themeSwitch = document.getElementById('theme-switch');
+  if (!themeSwitch) return;
+  
+  themeSwitch.innerHTML = theme === 'dark' 
+    ? '<i class="fas fa-sun"></i>' 
+    : '<i class="fas fa-moon"></i>';
+}
+
+// 初始化语言切换
+function initLanguageSwitch() {
+  // 获取语言切换按钮
+  const languageSwitch = document.getElementById('language-switch');
+  if (!languageSwitch) return;
+  
+  // 设置初始语言文本
+  updateLanguageSwitchText();
+  
+  // 添加语言切换事件
+  languageSwitch.addEventListener('click', () => {
+    languageManager.switchLanguage();
+    updateLanguageSwitchText();
+    renderContent(); // 重新渲染内容
+  });
+  
+  // 添加语言变化监听器
+  languageManager.addListener(() => {
+    updateLanguageSwitchText();
+  });
+}
+
+// 更新语言切换按钮文本
+function updateLanguageSwitchText() {
+  const languageSwitch = document.getElementById('language-switch');
+  if (!languageSwitch) return;
+  
+  const currentLanguage = languageManager.getCurrentLanguage();
+  const switchText = configLoader.getConfig('profile', 'ui.languageSwitch');
+  
+  languageSwitch.textContent = switchText;
+}
+
+// 初始化导航
+function initNavigation() {
+  // 获取导航链接
+  const navLinks = document.querySelectorAll('.nav-links a');
+  
+  // 更新导航文本
+  navLinks.forEach(link => {
+    const section = link.getAttribute('data-section');
+    if (section) {
+      const text = configLoader.getConfig('profile', `navigation.${section}`);
+      if (text) link.textContent = text;
+    }
+  });
+  
+  // 移动端菜单
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
     });
     
-    // 点击导航链接后关闭菜单
-    const navLinks = document.querySelectorAll('#nav ul li a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        nav.classList.remove('active');
-        const icon = mobileMenuToggle.querySelector('i');
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
+    // 点击菜单项后关闭菜单
+    const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+    mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
       });
     });
   }
-}
-
-// 主题切换
-function setupThemeToggle() {
-  const themeToggle = document.getElementById('theme-toggle');
-  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
   
-  // 检查本地存储中的主题设置
-  const currentTheme = localStorage.getItem('theme');
-  if (currentTheme === 'dark') {
-    document.body.setAttribute('data-theme', 'dark');
-    updateThemeIcon(true);
-  } else if (currentTheme === 'light') {
-    document.body.setAttribute('data-theme', 'light');
-    updateThemeIcon(false);
-  } else {
-    // 如果没有存储的主题，则使用系统偏好
-    if (prefersDarkScheme.matches) {
-      document.body.setAttribute('data-theme', 'dark');
-      updateThemeIcon(true);
-    }
-  }
-  
-  // 主题切换按钮点击事件
-  if (themeToggle) {
-    themeToggle.addEventListener('click', function() {
-      let theme;
-      if (document.body.getAttribute('data-theme') === 'dark') {
-        document.body.removeAttribute('data-theme');
-        theme = 'light';
-        updateThemeIcon(false);
-      } else {
-        document.body.setAttribute('data-theme', 'dark');
-        theme = 'dark';
-        updateThemeIcon(true);
+  // 滚动监听
+  window.addEventListener('scroll', () => {
+    const scrollPosition = window.scrollY;
+    
+    // 获取所有部分
+    const sections = document.querySelectorAll('section');
+    
+    // 检查当前滚动位置
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      const sectionBottom = sectionTop + section.offsetHeight;
+      const sectionId = section.getAttribute('id');
+      
+      if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+        // 移除所有活动类
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+        });
+        
+        // 添加活动类到当前部分的链接
+        const activeLink = document.querySelector(`.nav-links a[href="#${sectionId}"]`);
+        if (activeLink) {
+          activeLink.classList.add('active');
+        }
       }
-      localStorage.setItem('theme', theme);
-    });
-  }
-  
-  // 更新主题图标
-  function updateThemeIcon(isDark) {
-    const icon = themeToggle.querySelector('i');
-    if (isDark) {
-      icon.classList.remove('fa-moon');
-      icon.classList.add('fa-sun');
-    } else {
-      icon.classList.remove('fa-sun');
-      icon.classList.add('fa-moon');
-    }
-  }
-}
-
-// 语言切换
-function setupLanguageToggle() {
-  const languageToggle = document.getElementById('language-toggle');
-  
-  // 检查本地存储中的语言设置
-  const currentLang = localStorage.getItem('language') || 'zh';
-  
-  // 语言切换按钮点击事件
-  if (languageToggle) {
-    languageToggle.addEventListener('click', function() {
-      const currentLang = localStorage.getItem('language') || 'zh';
-      const newLang = currentLang === 'zh' ? 'en' : 'zh';
-      localStorage.setItem('language', newLang);
-      
-      // 在实际应用中，这里会切换页面上的文本
-      // 简化版本中，我们只切换按钮文本
-      const langText = languageToggle.querySelector('span');
-      if (newLang === 'en') {
-        langText.textContent = 'EN / 中';
-      } else {
-        langText.textContent = '中 / EN';
-      }
-      
-      // 在实际应用中，这里会重新加载页面或更新所有文本
-      // alert('语言已切换为: ' + (newLang === 'zh' ? '中文' : 'English'));
-    });
-  }
-}
-
-// 经历标签页切换
-function setupTabs() {
-  const tabBtns = document.querySelectorAll('.tab-btn');
-  
-  tabBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // 移除所有按钮的active类
-      tabBtns.forEach(btn => btn.classList.remove('active'));
-      
-      // 添加当前按钮的active类
-      this.classList.add('active');
-      
-      // 获取目标内容
-      const target = this.getAttribute('data-target');
-      
-      // 隐藏所有内容
-      const contents = document.querySelectorAll('.tab-content');
-      contents.forEach(content => content.classList.remove('active'));
-      
-      // 显示目标内容
-      document.getElementById(target).classList.add('active');
     });
   });
 }
 
-// 项目筛选
-function setupProjectFilters() {
+// 渲染内容
+function renderContent() {
+  // 渲染个人资料
+  renderProfile();
+  
+  // 渲染技能
+  renderSkills();
+  
+  // 渲染经历
+  renderExperience();
+  
+  // 渲染项目
+  renderProjects();
+  
+  // 渲染联系信息
+  renderContact();
+}
+
+// 渲染个人资料
+function renderProfile() {
+  // 获取个人资料配置
+  const profile = configLoader.getConfig('profile');
+  
+  // 更新标题
+  document.title = profile.name;
+  
+  // 更新徽标
+  const logoElements = document.querySelectorAll('.logo');
+  logoElements.forEach(el => {
+    el.textContent = profile.name;
+  });
+  
+  // 更新英雄部分
+  const heroTitle = document.querySelector('.hero h1');
+  const heroSubtitle = document.querySelector('.hero p');
+  const resumeBtn = document.querySelector('.hero-buttons .resume-btn');
+  
+  if (heroTitle) heroTitle.textContent = profile.name;
+  if (heroSubtitle) heroSubtitle.textContent = profile.title;
+  if (resumeBtn) {
+    resumeBtn.textContent = profile.resume.buttonText;
+    resumeBtn.href = profile.resume.downloadLink;
+  }
+  
+  // 更新关于部分
+  const aboutIntro = document.querySelector('#about .about-text p:first-child');
+  const aboutDesc = document.querySelector('#about .about-text p:last-child');
+  
+  if (aboutIntro) aboutIntro.textContent = profile.about.introduction;
+  if (aboutDesc) aboutDesc.textContent = profile.about.description;
+  
+  // 更新版权信息
+  const copyright = document.querySelector('.copyright');
+  if (copyright) {
+    const year = new Date().getFullYear();
+    copyright.textContent = `© ${year} ${profile.name}. ${profile.ui.copyright}`;
+  }
+}
+
+// 渲染技能
+function renderSkills() {
+  // 获取技能配置
+  const skills = configLoader.getConfig('skills');
+  
+  // 获取技能容器
+  const skillsContainer = document.querySelector('.skills');
+  if (!skillsContainer || !skills.length) return;
+  
+  // 清空容器
+  skillsContainer.innerHTML = '';
+  
+  // 添加技能项
+  skills.forEach(skill => {
+    const skillItem = document.createElement('div');
+    skillItem.className = 'skill-item';
+    
+    skillItem.innerHTML = `
+      <div class="skill-info">
+        <span>${skill.name}</span>
+        <span>${skill.percentage}%</span>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-progress" style="width: ${skill.percentage}%"></div>
+      </div>
+      <p class="skill-description">${skill.description}</p>
+    `;
+    
+    skillsContainer.appendChild(skillItem);
+  });
+}
+
+// 渲染经历
+function renderExperience() {
+  // 获取经历配置
+  const experience = configLoader.getConfig('experience');
+  if (!experience || !experience.categories) return;
+  
+  // 获取经历容器
+  const experienceTabs = document.querySelector('.experience-tabs');
+  const experienceContents = document.querySelector('.experience-contents');
+  
+  if (!experienceTabs || !experienceContents) return;
+  
+  // 清空容器
+  experienceTabs.innerHTML = '';
+  experienceContents.innerHTML = '';
+  
+  // 添加标签和内容
+  Object.entries(experience.categories).forEach(([key, value], index) => {
+    // 创建标签
+    const tab = document.createElement('div');
+    tab.className = `experience-tab ${index === 0 ? 'active' : ''}`;
+    tab.setAttribute('data-tab', key);
+    tab.textContent = value;
+    experienceTabs.appendChild(tab);
+    
+    // 创建内容
+    const content = document.createElement('div');
+    content.className = `experience-content ${index === 0 ? 'active' : ''}`;
+    content.setAttribute('data-content', key);
+    
+    // 添加经历项
+    if (experience.items && experience.items[key]) {
+      experience.items[key].forEach(item => {
+        const experienceItem = document.createElement('div');
+        experienceItem.className = 'experience-item';
+        
+        experienceItem.innerHTML = `
+          <div class="experience-header">
+            <div class="experience-title">${item.title}</div>
+            <div class="experience-period">${item.period}</div>
+          </div>
+          <div class="experience-organization">${item.organization}</div>
+          <p class="experience-description">${item.description}</p>
+        `;
+        
+        content.appendChild(experienceItem);
+      });
+    }
+    
+    experienceContents.appendChild(content);
+  });
+  
+  // 添加标签点击事件
+  const tabs = document.querySelectorAll('.experience-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // 移除所有活动类
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.experience-content').forEach(c => c.classList.remove('active'));
+      
+      // 添加活动类到当前标签和内容
+      tab.classList.add('active');
+      const tabName = tab.getAttribute('data-tab');
+      document.querySelector(`.experience-content[data-content="${tabName}"]`).classList.add('active');
+    });
+  });
+}
+
+// 渲染项目
+function renderProjects() {
+  // 获取项目配置
+  const projects = configLoader.getConfig('projects');
+  if (!projects || !projects.categories || !projects.items) return;
+  
+  // 获取项目容器
+  const projectsFilter = document.querySelector('.projects-filter');
+  const projectsGrid = document.querySelector('.projects-grid');
+  
+  if (!projectsFilter || !projectsGrid) return;
+  
+  // 清空容器
+  projectsFilter.innerHTML = '';
+  projectsGrid.innerHTML = '';
+  
+  // 添加筛选按钮
+  Object.entries(projects.categories).forEach(([key, value], index) => {
+    const filterBtn = document.createElement('button');
+    filterBtn.className = `filter-btn ${index === 0 ? 'active' : ''}`;
+    filterBtn.setAttribute('data-filter', key);
+    filterBtn.textContent = value;
+    projectsFilter.appendChild(filterBtn);
+  });
+  
+  // 添加项目卡片
+  projects.items.forEach(project => {
+    const projectCard = document.createElement('div');
+    projectCard.className = 'project-card';
+    projectCard.setAttribute('data-category', project.category);
+    
+    // 获取项目图片路径
+    const imagePath = resourceManager.getProjectImagePath(project.image);
+    
+    projectCard.innerHTML = `
+      <div class="project-image">
+        <img src="${imagePath}" alt="${project.title}">
+      </div>
+      <div class="project-info">
+        <h3 class="project-title">${project.title}</h3>
+        <p class="project-description">${project.description}</p>
+        <div class="project-tags">
+          ${project.tags.map(tag => `<span class="project-tag">${tag}</span>`).join('')}
+        </div>
+        <div class="project-links">
+          ${project.links.github ? `<a href="${project.links.github}" target="_blank"><i class="fab fa-github"></i> GitHub</a>` : ''}
+          ${project.links.demo ? `<a href="${project.links.demo}" target="_blank"><i class="fas fa-external-link-alt"></i> Demo</a>` : ''}
+        </div>
+      </div>
+    `;
+    
+    projectsGrid.appendChild(projectCard);
+  });
+  
+  // 添加筛选功能
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
   
   filterBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      // 移除所有按钮的active类
-      filterBtns.forEach(btn => btn.classList.remove('active'));
+    btn.addEventListener('click', () => {
+      // 移除所有活动类
+      filterBtns.forEach(b => b.classList.remove('active'));
       
-      // 添加当前按钮的active类
-      this.classList.add('active');
+      // 添加活动类到当前按钮
+      btn.classList.add('active');
       
       // 获取筛选类别
-      const filter = this.getAttribute('data-filter');
+      const filter = btn.getAttribute('data-filter');
       
       // 筛选项目
       projectCards.forEach(card => {
@@ -221,38 +409,102 @@ function setupProjectFilters() {
   });
 }
 
-// 联系表单处理
-function setupContactForm() {
-  const contactForm = document.getElementById('contact-form');
+// 渲染联系信息
+function renderContact() {
+  // 获取个人资料配置
+  const profile = configLoader.getConfig('profile');
+  if (!profile || !profile.contact) return;
   
-  if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
+  // 更新联系信息
+  const emailElement = document.querySelector('.contact-email .contact-text');
+  const phoneElement = document.querySelector('.contact-phone .contact-text');
+  const locationElement = document.querySelector('.contact-location .contact-text');
+  
+  if (emailElement) emailElement.textContent = profile.contact.email;
+  if (phoneElement) phoneElement.textContent = profile.contact.phone;
+  if (locationElement) locationElement.textContent = profile.contact.location;
+  
+  // 更新社交链接
+  const socialLinks = document.querySelector('.social-links');
+  if (socialLinks && profile.contact.social) {
+    socialLinks.innerHTML = '';
+    
+    // 添加社交链接
+    Object.entries(profile.contact.social).forEach(([platform, url]) => {
+      if (!url) return;
+      
+      const socialLink = document.createElement('a');
+      socialLink.className = 'social-link';
+      socialLink.href = url;
+      socialLink.target = '_blank';
+      
+      // 根据平台设置图标
+      let icon = '';
+      switch (platform) {
+        case 'github':
+          icon = 'fab fa-github';
+          break;
+        case 'linkedin':
+          icon = 'fab fa-linkedin-in';
+          break;
+        case 'twitter':
+          icon = 'fab fa-twitter';
+          break;
+        case 'weixin':
+          icon = 'fab fa-weixin';
+          break;
+        default:
+          icon = 'fas fa-link';
+      }
+      
+      socialLink.innerHTML = `<i class="${icon}"></i>`;
+      socialLinks.appendChild(socialLink);
+    });
+  }
+  
+  // 更新联系表单
+  const nameLabel = document.querySelector('label[for="name"]');
+  const emailLabel = document.querySelector('label[for="email"]');
+  const messageLabel = document.querySelector('label[for="message"]');
+  const submitBtn = document.querySelector('.contact-form button[type="submit"]');
+  
+  if (nameLabel) nameLabel.textContent = profile.ui.formLabels.name;
+  if (emailLabel) emailLabel.textContent = profile.ui.formLabels.email;
+  if (messageLabel) messageLabel.textContent = profile.ui.formLabels.message;
+  if (submitBtn) submitBtn.textContent = profile.ui.sendMessage;
+}
+
+// 初始化交互功能
+function initInteractions() {
+  // 平滑滚动
+  const scrollLinks = document.querySelectorAll('a[href^="#"]');
+  scrollLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
       e.preventDefault();
       
-      // 获取表单数据
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
+      const targetId = link.getAttribute('href');
+      if (targetId === '#') return;
       
-      // 在实际应用中，这里会发送表单数据到服务器
-      // 简化版本中，我们只显示一个提示
-      alert(`感谢您的留言，${name}！\n我们会尽快回复您。`);
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.offsetTop - 70,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+  
+  // 联系表单提交
+  const contactForm = document.querySelector('.contact-form form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
       
-      // 重置表单
+      // 在实际应用中，这里应该发送表单数据到服务器
+      // 这里只是模拟提交成功
+      alert('表单提交成功！在实际应用中，这里会发送数据到服务器。');
       contactForm.reset();
     });
   }
-}
-
-// 滚动监听
-function setupScrollListener() {
-  const header = document.getElementById('header');
-  
-  window.addEventListener('scroll', function() {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  });
 }

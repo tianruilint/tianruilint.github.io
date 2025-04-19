@@ -1,0 +1,41 @@
+{
+  "name": "约翰·多伊",
+  "title": "开发者，设计师，创造者",
+  "about": {
+    "introduction": "我是一名充满热情的开发人员，专注于创建直观且响应式的网页应用。我热爱解决复杂问题并构建用户友好的界面。",
+    "description": "作为一名全栈开发者，我擅长前端和后端技术，能够从概念到部署构建完整的应用程序。我注重代码质量和用户体验，始终追求最佳实践和创新解决方案。"
+  },
+  "contact": {
+    "email": "email@example.com",
+    "phone": "+1 234 567 890",
+    "location": "北京市，中国",
+    "social": {
+      "github": "https://github.com/yourusername",
+      "linkedin": "https://linkedin.com/in/yourusername",
+      "twitter": "https://twitter.com/yourusername",
+      "weixin": "your_weixin_id"
+    }
+  },
+  "resume": {
+    "downloadLink": "./resources/documents/resume.pdf",
+    "buttonText": "下载简历"
+  },
+  "navigation": {
+    "home": "首页",
+    "about": "关于我",
+    "experience": "经历",
+    "projects": "项目",
+    "contact": "联系"
+  },
+  "ui": {
+    "languageSwitch": "中 / EN",
+    "sendMessage": "发送消息",
+    "allProjects": "全部",
+    "formLabels": {
+      "name": "姓名",
+      "email": "邮箱",
+      "message": "留言"
+    },
+    "copyright": "版权所有"
+  }
+}

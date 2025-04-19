@@ -1,0 +1,41 @@
+{
+  "name": "John Doe",
+  "title": "Developer, Designer, Creator",
+  "about": {
+    "introduction": "I am a passionate developer focused on creating intuitive and responsive web applications. I love solving complex problems and building user-friendly interfaces.",
+    "description": "As a full-stack developer, I excel in both frontend and backend technologies, capable of building complete applications from concept to deployment. I value code quality and user experience, always pursuing best practices and innovative solutions."
+  },
+  "contact": {
+    "email": "email@example.com",
+    "phone": "+1 234 567 890",
+    "location": "Beijing, China",
+    "social": {
+      "github": "https://github.com/yourusername",
+      "linkedin": "https://linkedin.com/in/yourusername",
+      "twitter": "https://twitter.com/yourusername",
+      "weixin": "your_weixin_id"
+    }
+  },
+  "resume": {
+    "downloadLink": "./resources/documents/resume.pdf",
+    "buttonText": "Download Resume"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "experience": "Experience",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "ui": {
+    "languageSwitch": "EN / 中",
+    "sendMessage": "Send Message",
+    "allProjects": "All",
+    "formLabels": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message"
+    },
+    "copyright": "All Rights Reserved"
+  }
+}

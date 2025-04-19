@@ -1,0 +1,76 @@
+{
+  "categories": {
+    "all": "All",
+    "web": "Web",
+    "mobile": "Mobile",
+    "design": "Design"
+  },
+  "items": [
+    {
+      "title": "Responsive Website Template",
+      "category": "web",
+      "description": "A modern responsive website template suitable for personal and business websites. Uses the latest HTML5 and CSS3 technologies to ensure excellent display on various devices.",
+      "image": "./resources/images/projects/responsive-template.jpg",
+      "tags": ["HTML", "CSS", "JavaScript"],
+      "links": {
+        "github": "https://github.com/yourusername/responsive-template",
+        "demo": "https://yourusername.github.io/responsive-template"
+      }
+    },
+    {
+      "title": "Task Management App",
+      "category": "mobile",
+      "description": "A clean and efficient task management application that helps users organize their daily work and life. Supports task categorization, priority setting, deadline reminders, and more.",
+      "image": "./resources/images/projects/task-manager.jpg",
+      "tags": ["React Native", "Firebase"],
+      "links": {
+        "github": "https://github.com/yourusername/task-manager",
+        "demo": "https://yourusername.github.io/task-manager"
+      }
+    },
+    {
+      "title": "UI Component Library",
+      "category": "design",
+      "description": "A modern UI component library containing various commonly used interface elements. Consistent design style, easy to integrate into various web projects, improving development efficiency.",
+      "image": "./resources/images/projects/ui-library.jpg",
+      "tags": ["Figma", "UI/UX"],
+      "links": {
+        "github": "https://github.com/yourusername/ui-library",
+        "demo": "https://yourusername.github.io/ui-library"
+      }
+    },
+    {
+      "title": "E-commerce Platform",
+      "category": "web",
+      "description": "A fully-featured e-commerce platform supporting product display, shopping cart, and payment functions. Uses a modern technology stack to provide a smooth user experience.",
+      "image": "./resources/images/projects/ecommerce.jpg",
+      "tags": ["React", "Node.js", "MongoDB"],
+      "links": {
+        "github": "https://github.com/yourusername/ecommerce",
+        "demo": "https://yourusername.github.io/ecommerce"
+      }
+    },
+    {
+      "title": "Weather Forecast App",
+      "category": "mobile",
+      "description": "A real-time weather forecast application providing current weather conditions and forecasts for the coming days. Supports multiple city switching and displays detailed information such as temperature, humidity, and wind speed.",
+      "image": "./resources/images/projects/weather-app.jpg",
+      "tags": ["React", "Weather API"],
+      "links": {
+        "github": "https://github.com/yourusername/weather-app",
+        "demo": "https://yourusername.github.io/weather-app"
+      }
+    },
+    {
+      "title": "Brand Design System",
+      "category": "design",
+      "description": "A complete brand system designed for a startup company, including logo, color scheme, font selection, and application guidelines. Established a consistent visual language.",
+      "image": "./resources/images/projects/brand-system.jpg",
+      "tags": ["Branding", "Illustrator", "Design System"],
+      "links": {
+        "github": "https://github.com/yourusername/brand-system",
+        "demo": "https://yourusername.github.io/brand-system"
+      }
+    }
+  ]
+}
