@@ -38,6 +38,13 @@
       "email": "邮箱",
       "message": "留言"
     },
+    "passwordModal": {
+      "title": "需要密码",
+      "prompt": "请输入密码以下载简历:",
+      "submitButton": "确认",
+      "errorMessage": "密码错误，请重试。",
+      "placeholder": "输入密码"
+    },
     "copyright": "版权所有"
   }
 }

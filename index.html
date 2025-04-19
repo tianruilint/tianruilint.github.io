@@ -9,6 +9,24 @@
   <link rel="stylesheet" href="./css/loader.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
+<div id="password-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn" id="password-close-btn">&times;</span>
+    <h3 id="modal-title">需要密码</h3>
+    <p id="modal-prompt">请输入密码以下载简历:</p>
+    <div class="modal-input-group">
+      <input type="password" id="password-input" placeholder="输入密码">
+      <p id="password-error" class="error-message"></p>
+    </div>
+    <button id="password-submit" class="btn">确认</button>
+  </div>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
+
 <body class="loading">
   <!-- 加载指示器 -->
   <div class="loader">
@@ -49,7 +67,7 @@
     <div class="container hero-container"> <div class="hero-content">
         <h1>约翰·多伊</h1> <p>开发者，设计师，创造者</p> <div class="hero-buttons">
           <a href="#contact" class="btn" id="hero-contact-btn">联系我</a>
-          <a href="./resources/documents/resume.pdf" class="btn resume-btn" target="_blank">下载简历</a>
+          <a href="#" class="btn resume-btn" id="resume-download-btn" data-resume-link="./resources/documents/resume.pdf">下载简历</a>
         </div>
       </div>
       <div class="hero-image">

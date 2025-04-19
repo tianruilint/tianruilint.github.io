@@ -38,6 +38,13 @@
       "email": "Email",
       "message": "Message"
     },
+    "passwordModal": {
+      "title": "Password Required",
+      "prompt": "Please enter the password to download the resume:",
+      "submitButton": "Submit",
+      "errorMessage": "Incorrect password. Please try again.",
+      "placeholder": "Enter password"
+    },
     "copyright": "All Rights Reserved"
   }
 }

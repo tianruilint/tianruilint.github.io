@@ -868,3 +868,109 @@ footer {
     margin-top: 0.5rem;
   }
 }
+
+/* 弹窗样式 */
+.modal {
+  display: none; /* 默认隐藏 */
+  position: fixed; /* 固定位置 */
+  z-index: 1001; /* 比 header 更高 */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* 如果内容过多则允许滚动 */
+  background-color: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+  justify-content: center; /* 水平居中 (配合 display: flex) */
+  align-items: center; /* 垂直居中 (配合 display: flex) */
+  opacity: 0; /* 初始透明 */
+  transition: opacity 0.3s ease; /* 过渡效果 */
+}
+
+.modal.show {
+  display: flex; /* 显示时使用 flex 布局 */
+  opacity: 1; /* 完全可见 */
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  margin: auto;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  width: 90%;
+  max-width: 400px; /* 限制最大宽度 */
+  position: relative;
+  animation: fadeInUp 0.3s ease; /* 使用现有动画 */
+}
+
+.close-btn {
+  color: var(--text-secondary);
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+.modal-content h3::after { /* 移除标题下划线或调整 */
+    display: none; /* 或根据需要调整样式 */
+}
+
+
+.modal-content p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.modal-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-input-group input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.5rem; /* 在输入框和错误消息之间添加空间 */
+}
+.modal-input-group input[type="password"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.error-message {
+  color: #dc3545; /* 醒目的红色 */
+  font-size: 0.875rem;
+  min-height: 1.2em; /* 预留空间，防止布局跳动 */
+  display: block; /* 确保它占用空间 */
+}
+
+.modal-content .btn {
+  display: block; /* 让按钮占据整行 */
+  width: 100%;
+  padding: 0.75rem; /* 稍微增大按钮内边距 */
+  margin-top: 1rem; /* 与上方元素的间距 */
+}
+
+/* 防止背景滚动当弹窗打开时 */
+body.modal-open {
+  overflow: hidden;
+}
