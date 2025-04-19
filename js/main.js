@@ -9,23 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initWebsite();
 });
 
-function cleanupExtraNavigation() {
-  // 查找直接在 body 下的导航链接
-  const bodyChildNodes = document.body.childNodes;
-  for (let i = 0; i < bodyChildNodes.length; i++) {
-    const node = bodyChildNodes[i];
-    // 检查是否是直接附加到 body 的导航链接
-    if (node.nodeType === 1 && // 元素节点
-        ((node.classList && node.classList.contains('nav-links')) || 
-         (node.tagName === 'A' && node.getAttribute('href') && node.getAttribute('href').startsWith('#')))) {
-      document.body.removeChild(node);
-    }
-  }
-}
-
 // 初始化网站
 async function initWebsite() {
-  cleanupExtraNavigation();
   // 等待配置加载完成
   configLoader.addLoadListener(() => {
     // 初始化主题
@@ -126,7 +111,7 @@ function updateLanguageSwitchText() {
 // 初始化导航
 function initNavigation() {
   // 获取导航链接
-  const navLinks = document.querySelectorAll('.navbar .nav-links a');
+  const navLinks = document.querySelectorAll('.nav-links a');
   
   // 更新导航文本
   navLinks.forEach(link => {
