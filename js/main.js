@@ -210,16 +210,25 @@ function renderProfile() {
   // 更新英雄部分
   const heroTitle = document.querySelector('.hero h1');
   const heroSubtitle = document.querySelector('.hero p'); // 选择 Hero 副标题
-  const resumeBtn = document.querySelector('.hero-buttons .resume-btn');
-  const contactBtn = document.getElementById('hero-contact-btn'); // <<< (假设你给联系我按钮添加了 ID)
+  const resumeBtn = document.getElementById('resume-download-btn'); // 使用 ID 选择
+  const contactBtn = document.getElementById('hero-contact-btn');
 
   if (heroTitle) heroTitle.textContent = profile.name;
   if (heroSubtitle) heroSubtitle.textContent = profile.title;
-   if (resumeBtn && profile.resume) {
-       resumeBtn.textContent = profile.resume.buttonText;
-       // 如果简历文件也区分语言，这里可能需要动态路径
-       resumeBtn.href = resourceManager.getDocumentPath(profile.resume.downloadLink); // 使用 resourceManager 获取文档路径
-   }
+  if (resumeBtn && profile.resume) {
+    resumeBtn.textContent = profile.resume.buttonText;
+    // 更新 data-resume-link 属性，而不是 href
+    const resumeLink = profile.resume.downloadLink;
+    if (resumeLink) {
+       resumeBtn.setAttribute('data-resume-link', resumeLink);
+    } else {
+       console.warn("Resume download link is missing in profile config.");
+       resumeBtn.style.display = 'none'; // 如果没有链接，隐藏按钮
+    }
+} else if(resumeBtn) {
+     resumeBtn.style.display = 'none'; // 如果配置中没有 resume 部分，也隐藏按钮
+}
+
   
   // 更新 "联系我" 按钮
   if (contactBtn && profile.ui.contactMeButton) { // <<< 更新 联系我 按钮
@@ -560,6 +569,113 @@ function initInteractions() {
     + ', .hero-buttons a[href^="#contact"]'       // Hero 联系按钮
     // 你可以根据需要添加其他特定区域的链接选择器
   );
+
+    // 密码保护简历下载逻辑
+    const resumeDownloadBtn = document.getElementById('resume-download-btn');
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordSubmitBtn = document.getElementById('password-submit');
+    const passwordCloseBtn = document.getElementById('password-close-btn');
+    const passwordErrorMsg = document.getElementById('password-error');
+    const modalTitle = document.getElementById('modal-title');
+    const modalPrompt = document.getElementById('modal-prompt');
+  
+    let actualResumeLink = ''; // 存储真实的简历链接
+  
+    if (resumeDownloadBtn && passwordModal && passwordInput && passwordSubmitBtn && passwordCloseBtn && passwordErrorMsg) {
+      // 获取真实的简历链接并存储
+      actualResumeLink = resumeDownloadBtn.getAttribute('data-resume-link');
+      if(!actualResumeLink){
+        console.error("Resume download link not found in data-resume-link attribute.");
+        // 可以选择禁用按钮
+        // resumeDownloadBtn.style.display = 'none';
+        // return; // 如果没有链接，后续逻辑无意义
+      }
+  
+  
+      // 打开弹窗
+      resumeDownloadBtn.addEventListener('click', (e) => {
+        e.preventDefault(); // 阻止默认的 href="#" 跳转
+  
+        // 获取当前语言的文本并更新弹窗
+        modalTitle.textContent = configLoader.getConfig('profile', 'ui.passwordModal.title') || '需要密码';
+        modalPrompt.textContent = configLoader.getConfig('profile', 'ui.passwordModal.prompt') || '请输入密码以下载简历:';
+        passwordInput.placeholder = configLoader.getConfig('profile', 'ui.passwordModal.placeholder') || '输入密码';
+        passwordSubmitBtn.textContent = configLoader.getConfig('profile', 'ui.passwordModal.submitButton') || '确认';
+        passwordErrorMsg.textContent = ''; // 清空之前的错误信息
+        passwordInput.value = ''; // 清空输入框
+  
+        passwordModal.classList.add('show');
+        document.body.classList.add('modal-open'); // 防止背景滚动
+        passwordInput.focus(); // 自动聚焦输入框
+      });
+  
+      // 关闭弹窗 (通过关闭按钮)
+      passwordCloseBtn.addEventListener('click', () => {
+        passwordModal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+      });
+  
+      // 关闭弹窗 (通过点击背景)
+      passwordModal.addEventListener('click', (e) => {
+        // 检查点击的是否是 modal 背景本身
+        if (e.target === passwordModal) {
+          passwordModal.classList.remove('show');
+          document.body.classList.remove('modal-open');
+        }
+      });
+  
+      // 处理密码提交
+      const handlePasswordSubmit = () => {
+        const enteredPassword = passwordInput.value;
+        const correctPassword = '8888'; // 你设置的固定密码
+  
+        if (enteredPassword === correctPassword) {
+          // 密码正确
+          passwordModal.classList.remove('show');
+          document.body.classList.remove('modal-open');
+          passwordErrorMsg.textContent = ''; // 清空错误信息
+  
+          // --- 执行下载 ---
+           if (actualResumeLink) {
+               // 尝试使用创建链接的方式强制下载
+               const link = document.createElement('a');
+               link.href = resourceManager.getDocumentPath(actualResumeLink); // 使用 resourceManager 获取完整路径
+               // 从路径中提取文件名作为建议的文件名
+               const filename = actualResumeLink.substring(actualResumeLink.lastIndexOf('/') + 1);
+               link.download = filename || 'resume'; // 设置下载的文件名
+               document.body.appendChild(link);
+               link.click();
+               document.body.removeChild(link); // 清理 DOM
+           } else {
+               console.error("Cannot download: Resume link is missing.");
+               // 可以显示一个错误给用户
+               passwordErrorMsg.textContent = '下载链接丢失，无法下载。'; // 或者使用翻译
+               passwordModal.classList.add('show'); // 重新显示弹窗以示错误
+               document.body.classList.add('modal-open');
+           }
+  
+        } else {
+          // 密码错误
+          passwordErrorMsg.textContent = configLoader.getConfig('profile', 'ui.passwordModal.errorMessage') || '密码错误，请重试。';
+          passwordInput.focus(); // 让用户重新输入
+          passwordInput.value = ''; // 清空错误的密码
+        }
+      };
+  
+      // 点击提交按钮
+      passwordSubmitBtn.addEventListener('click', handlePasswordSubmit);
+  
+      // 在输入框中按 Enter 键提交
+      passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault(); // 阻止默认的回车行为（比如触发表单提交）
+          handlePasswordSubmit();
+        }
+      });
+    } else {
+      console.warn('Password modal elements not found. Resume download password protection disabled.');
+    }
 
   scrollLinks.forEach(link => {
     // 防止重复添加监听器 (如果 initInteractions 可能被多次调用)
