@@ -548,7 +548,7 @@ function renderFooter() {
     const copyrightText = profile.ui.copyright || "All Rights Reserved"; // 提供一个默认值
     copyrightElement.textContent = `© ${year} ${profile.name}. ${copyrightText}`;
   }
-
+}
 // 初始化交互功能
 function initInteractions() {
   // 平滑滚动
@@ -583,4 +583,4 @@ function initInteractions() {
     });
   }
 }
-}
+
