@@ -192,6 +192,9 @@ function renderContent() {
   
   // 渲染联系信息
   renderContact();
+
+  // 渲染页脚
+  renderFooter();
 }
 
 // 渲染个人资料
@@ -509,6 +512,43 @@ function renderContact() {
   if (submitBtn) submitBtn.textContent = profile.ui.sendMessage;
 }
 
+function renderFooter() {
+  const profile = configLoader.getConfig('profile');
+  // 检查 profile 和 navigation 数据是否存在
+  if (!profile || !profile.navigation) {
+      console.warn('Footer rendering skipped: Profile or navigation data missing.');
+      return;
+  }
+
+  // 1. 更新页脚 Logo (使用 profile.name)
+  const footerLogo = document.querySelector('.footer-logo');
+  if (footerLogo && profile.name) {
+    footerLogo.textContent = profile.name;
+  }
+
+  // 2. 更新页脚导航链接
+  const footerLinks = document.querySelectorAll('.footer-links a');
+  footerLinks.forEach(link => {
+    // 从 href 获取片段标识符 (例如, 从 "#about" 获取 "about")
+    const sectionKey = link.getAttribute('href')?.substring(1);
+    if (sectionKey && profile.navigation[sectionKey]) {
+      // 从 profile.navigation 中获取对应语言的文本
+      link.textContent = profile.navigation[sectionKey];
+    } else {
+        console.warn(`Footer link text not found for section: ${sectionKey}`);
+    }
+  });
+
+  // 3. 更新版权信息 (这部分已由 renderProfile 处理，这里是可选的重复确保)
+  // 如果 renderProfile 确保执行，则可以省略这部分以避免重复代码
+  const copyrightElement = document.querySelector('.copyright');
+  if (copyrightElement && profile.name && profile.ui && profile.ui.copyright) {
+    const year = new Date().getFullYear();
+    // 注意：确保 profile.ui.copyright 在你的 JSON 文件中定义了
+    const copyrightText = profile.ui.copyright || "All Rights Reserved"; // 提供一个默认值
+    copyrightElement.textContent = `© ${year} ${profile.name}. ${copyrightText}`;
+  }
+
 // 初始化交互功能
 function initInteractions() {
   // 平滑滚动
@@ -542,4 +582,5 @@ function initInteractions() {
       contactForm.reset();
     });
   }
+}
 }
