@@ -30,6 +30,7 @@
   "ui": {
     "languageSwitch": "EN / 中",
     "sendMessage": "Send Message",
+    "contactMeButton": "Contact Me",
     "allProjects": "All",
     "formLabels": {
       "name": "Name",
