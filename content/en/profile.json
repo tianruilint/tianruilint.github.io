@@ -45,6 +45,8 @@
       "errorMessage": "Incorrect password. Please try again.",
       "placeholder": "Enter password"
     },
-    "copyright": "All Rights Reserved"
+    "copyright": "All Rights Reserved",
+    "notFoundSubtitle": "Uh-oh! You seem to have gone the wrong way",
+    "notFoundButton": "Go back"
   }
 }

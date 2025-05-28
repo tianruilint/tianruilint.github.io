@@ -45,6 +45,8 @@
       "errorMessage": "密码错误，请重试。",
       "placeholder": "输入密码"
     },
-    "copyright": "版权所有"
+    "copyright": "版权所有",
+    "notFoundSubtitle": "哎呀。看来你拐错弯了。",
+    "notFoundButton": "返回"
   }
 }
