@@ -329,6 +329,77 @@ border-bottom: none;
   position: relative; /* 用于可能的装饰元素 */
 }
 
+#home.hero {
+  display: flex;
+  flex-direction: column;
+  /* min-height: 100vh; 确保原有的，如果飞行树林要在视口底部，可能需要调整或让hero-container不占满全部 */
+  justify-content: flex-start; /* 让内容从顶部开始，而不是居中或space-between */
+  overflow: hidden; /* 防止3D内容溢出时出现滚动条 */
+  padding-bottom: 0; /* 如果树林占满底部，移除底部padding */
+}
+
+.hero .hero-container {
+  /* 根据需要调整，如果树林在 hero-container 外部，此部分可能不需要大改 */
+  /* padding-bottom: 2rem; /* 为树林区域留出空间或移除 */
+  z-index: 2; /* 确保英雄内容在渐变层之上 */
+  position: relative; /* 确保z-index生效 */
+}
+
+#flying-forest-wrapper {
+  width: 100%;
+  /* 高度可以是一个固定值，或者相对于视口的高度，或者让它填充剩余空间 */
+  height: 35vh; /* 示例：占据视口高度的35% */
+  min-height: 280px; /* 保证一个最小高度 */
+  position: relative; /* 用于定位伪元素渐变层和 #world */
+  margin-top: auto; /* 将其推到hero区域的底部，如果hero-container没有占满100vh */
+  z-index: 0;
+}
+
+/* 渐变效果，用于平滑过渡 */
+#flying-forest-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -80px; /* 渐变开始的位置，负值使其向上延伸，与上方内容融合 */
+  left: 0;
+  width: 100%;
+  height: 100px; /* 渐变区域的高度 */
+  background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
+  z-index: 1; /* 在树林背景之上，但在主要英雄内容之下 */
+  pointer-events: none; /* 允许点击穿透 */
+}
+
+/* #world 是飞行树林脚本中Three.js场景的容器 */
+#world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 飞行树林脚本会设置自己的背景，我们将通过JS来控制它以适应主题 */
+}
+
+/* 主题颜色变量扩展 - 在 :root 和 [data-theme="dark"] 中添加 */
+:root {
+  /* ... 已有变量 ... */
+  --forest-day-bg-gradient: linear-gradient(#e4e0ba, #f7d9aa);
+  --forest-day-fog-color: 0xf7d9aa;
+}
+
+[data-theme="dark"] {
+  /* ... 已有变量 ... */
+  --forest-night-bg-gradient: linear-gradient(#202030, #101020); /* 深蓝/深紫夜空 */
+  --forest-night-fog-color: 0x181825; /* 深色雾 */
+}
+
+/* 默认应用白天树林背景，JS会根据主题覆盖 */
+#world {
+  background: var(--forest-day-bg-gradient);
+}
+
+[data-theme="dark"] #flying-forest-wrapper::before {
+   background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
+}
+
 /* 图片本身样式 */
 .hero-image img#profile-pic {
   display: block;         /* 移除图片下方的空隙 */
@@ -616,6 +687,15 @@ border-bottom: none;
     height: 800px; /* 在较小屏幕上可能需要更高的高度 */
     max-width: 100%; /* 在小屏幕上允许 iframe 使用全部宽度 */
   }
+  #flying-forest-wrapper {
+    height: 250px; /* 在小屏幕上使用固定高度可能更好 */
+    /* 或者调整 vh 值，例如 40vh，视情况而定 */
+  }
+
+  #flying-forest-wrapper::before {
+    top: -50px; /* 可能也需要调整渐变位置 */
+    height: 60px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -839,6 +919,16 @@ footer {
   
   .mobile-menu a:last-child {
     border-bottom: none;
+  }
+  
+  #flying-forest-wrapper {
+    height: 250px; /* 在小屏幕上使用固定高度可能更好 */
+    /* 或者调整 vh 值，例如 40vh，视情况而定 */
+  }
+
+  #flying-forest-wrapper::before {
+    top: -50px; /* 可能也需要调整渐变位置 */
+    height: 60px;
   }
 }
 
