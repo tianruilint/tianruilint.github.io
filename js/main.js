@@ -36,32 +36,58 @@ async function initWebsite() {
 
 // 初始化主题
 function initTheme() {
-  // 获取主题切换按钮
   const themeSwitch = document.getElementById('theme-switch');
   if (!themeSwitch) return;
-  
-  // 从本地存储获取主题设置
+
   const savedTheme = localStorage.getItem('theme');
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  
-  // 设置初始主题
-  let currentTheme = savedTheme;
-  if (!currentTheme) {
-    currentTheme = prefersDarkScheme ? 'dark' : 'light';
-  }
-  
-  // 应用主题
+  let currentTheme = savedTheme || (prefersDarkScheme ? 'dark' : 'light');
+
   document.documentElement.setAttribute('data-theme', currentTheme);
-  
-  // 更新主题切换按钮文本
   updateThemeSwitchText(currentTheme);
-  
-  // 添加主题切换事件
+
+  // 调用飞行树林主题更新函数 (如果它已定义)
+  if (typeof window.updateFlyingForestTheme === "function") {
+    window.updateFlyingForestTheme(currentTheme);
+  }
+
   themeSwitch.addEventListener('click', () => {
     const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeSwitchText(newTheme);
+
+    // 当主题切换时，再次调用飞行树林主题更新
+    if (typeof window.updateFlyingForestTheme === "function") {
+      window.updateFlyingForestTheme(newTheme);
+    }
+  });
+}
+
+// 修改 initWebsite 函数 (或您主要的初始化流程)
+async function initWebsite() {
+  configLoader.addLoadListener(() => {
+    initTheme(); // initTheme 现在会处理飞行树林的初始主题
+    initLanguageSwitch();
+    initNavigation();
+    renderContent();
+    initInteractions();
+
+    // 在这里初始化飞行树林
+    if (document.getElementById('world') && typeof window.initFlyingForest === "function") {
+        // 确保在正确的时机调用，例如 hero section 已渲染
+        // setTimeout(window.initFlyingForest, 0); // 延迟一点点确保容器尺寸已就绪
+        window.initFlyingForest();
+
+        // 初始化后，根据当前主题设置一次颜色
+         const currentSiteTheme = document.documentElement.getAttribute('data-theme') || 'light';
+         if (typeof window.updateFlyingForestTheme === "function") {
+            window.updateFlyingForestTheme(currentSiteTheme);
+         }
+    }
+
+    document.body.classList.remove('loading');
+    document.body.classList.add('loaded');
   });
 }
 
