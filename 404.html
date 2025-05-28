@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纸飞机404</title>
+    <title>404</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
     <style>
@@ -1698,10 +1698,89 @@
             </div>
             <div class="number">4</div>
         </div>
-        <div class="subtitle">Uh-oh! You seem to have gone the wrong way</div>
-        <button>Go back</button>
+        <div class="subtitle" id="not-found-subtitle">Uh-oh! You seem to have gone the wrong way</div>
+        <button id="not-found-button" onclick="goBack()">Go back</button>
     </div>
 </div>
+<script>
+    function goToHome() {
+        window.location.href = './index.html'; // 重定向到首页
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const subtitleElement = document.getElementById('not-found-subtitle');
+        const buttonElement = document.getElementById('not-found-button');
+
+        // 如果按钮存在，修改其 onclick 事件
+        if (buttonElement) {
+            buttonElement.onclick = goToHome;
+        }
+
+        // 1. 检测当前语言
+        let currentLanguage = localStorage.getItem('language');
+        if (!currentLanguage || (currentLanguage !== 'zh' && currentLanguage !== 'en')) {
+            const browserLang = navigator.language || navigator.userLanguage;
+            currentLanguage = browserLang.startsWith('zh') ? 'zh' : 'en';
+        }
+        document.documentElement.lang = currentLanguage; // 更新 html lang 属性
+
+        // 2. 构建 JSON 文件路径
+        const profileJsonPath = `./content/${currentLanguage}/profile.json`;
+
+        try {
+            // 3. 异步加载 JSON 文件
+            const response = await fetch(profileJsonPath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status} while fetching ${profileJsonPath}`);
+            }
+            const profileData = await response.json();
+
+            // 4. 从加载的数据中获取翻译文本
+            const translations = profileData.ui || {}; // 确保 ui 对象存在
+            const subtitleText = translations.notFoundSubtitle;
+            const buttonText = translations.notFoundButton;
+
+            // 5. 更新页面元素
+            if (subtitleElement && subtitleText) {
+                subtitleElement.textContent = subtitleText;
+            } else if (subtitleElement) {
+                // 如果JSON中没有翻译，提供一个默认值
+                subtitleElement.textContent = (currentLanguage === 'zh') ? '哎呀。看来你拐错弯了。' : 'Uh-oh! You seem to have gone the wrong way';
+                console.warn(`Translation for 'notFoundSubtitle' not found in ${profileJsonPath}. Using default.`);
+            }
+
+            if (buttonElement && buttonText) {
+                buttonElement.textContent = buttonText;
+            } else if (buttonElement) {
+                 // 如果JSON中没有翻译，提供一个默认值
+                buttonElement.textContent = (currentLanguage === 'zh') ? '返回首页' : 'Go to Homepage';
+                console.warn(`Translation for 'notFoundButton' not found in ${profileJsonPath}. Using default.`);
+            }
+
+            // 更新页面标题
+            if (currentLanguage === 'zh') {
+                document.title = profileData.name ? `${profileData.name} - 页面未找到` : "页面未找到 - 404";
+            } else {
+                document.title = profileData.name ? `${profileData.name} - Page Not Found` : "Page Not Found - 404";
+            }
+
+        } catch (error) {
+            console.error('Failed to load 404 page translations:', error);
+            // 发生错误时，也设置默认文本
+            if (subtitleElement) {
+                subtitleElement.textContent = (currentLanguage === 'zh') ? '哎呀。看来你拐错弯了。' : 'Uh-oh! You seem to have gone the wrong way';
+            }
+            if (buttonElement) {
+                buttonElement.textContent = (currentLanguage === 'zh') ? '返回首页' : 'Go to Homepage';
+                if (currentLanguage === 'zh') {
+                    document.title = "页面未找到 - 404";
+                } else {
+                    document.title = "Page Not Found - 404";
+                }
+            }
+        }
+    });
+</script>
 </body>
 
 </html>
