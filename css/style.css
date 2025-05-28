@@ -687,15 +687,6 @@ border-bottom: none;
     height: 800px; /* 在较小屏幕上可能需要更高的高度 */
     max-width: 100%; /* 在小屏幕上允许 iframe 使用全部宽度 */
   }
-  #flying-forest-wrapper {
-    height: 250px; /* 在小屏幕上使用固定高度可能更好 */
-    /* 或者调整 vh 值，例如 40vh，视情况而定 */
-  }
-
-  #flying-forest-wrapper::before {
-    top: -50px; /* 可能也需要调整渐变位置 */
-    height: 60px;
-  }
 }
 
 @media (max-width: 576px) {
@@ -828,6 +819,17 @@ footer {
     grid-template-columns: 1fr;
     align-items: start;
   }
+
+  #flying-forest-wrapper {
+      height: 28vh; /* 略微减小 vh */
+      min-height: 220px;
+      max-height: 350px;
+  }
+
+  #flying-forest-wrapper::before {
+      top: -50px;
+      height: 70px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -920,15 +922,14 @@ footer {
   .mobile-menu a:last-child {
     border-bottom: none;
   }
-  
+
   #flying-forest-wrapper {
-    height: 250px; /* 在小屏幕上使用固定高度可能更好 */
-    /* 或者调整 vh 值，例如 40vh，视情况而定 */
+      height: 250px; /* 固定高度，避免 vh 在小屏幕上过小 */
   }
 
   #flying-forest-wrapper::before {
-    top: -50px; /* 可能也需要调整渐变位置 */
-    height: 60px;
+      top: -40px; /* 调整渐变，因为容器高度变化 */
+      height: 60px;
   }
 }
 
@@ -956,6 +957,16 @@ footer {
   
   .experience-period {
     margin-top: 0.5rem;
+  }
+
+  #flying-forest-wrapper {
+      height: 200px; /* 进一步减小固定高度 */
+      min-height: 180px; /* 保证显示效果 */
+  }
+  
+  #flying-forest-wrapper::before {
+      top: -30px;
+      height: 50px;
   }
 }
 
