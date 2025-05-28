@@ -8,9 +8,6 @@
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/loader.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-  <script src="./js/flying-forest.js"></script>
-  <script type="module" src="./js/main.js"></script>
 </head>
 
 <div id="password-modal" class="modal">
@@ -18,22 +15,15 @@
     <span class="close-btn" id="password-close-btn">&times;</span>
     <h3 id="modal-title">需要密码</h3>
     <p id="modal-prompt">请输入密码以下载简历:</p>
-    <form id="password-form">
-      <div class="modal-input-group">
-        <input type="password" id="password-input" placeholder="输入密码" autocomplete="current-password">
-        <p id="password-error" class="error-message"></p>
-      </div>
-      <button type="button" id="password-submit" class="btn">确认</button>
-    </form>
+    <div class="modal-input-group">
+      <input type="password" id="password-input" placeholder="输入密码">
+      <p id="password-error" class="error-message"></p>
+    </div>
+    <button id="password-submit" class="btn">确认</button>
   </div>
 </div>
 
-
-<body>
-  <div id="flying-forest-wrapper">
-    <div id="world"></div>
-  </div>
-  <script type="module" src="./js/flying-forest.js"></script> <script type="module" src="./js/main.js"></script>
+<script type="module" src="./js/main.js"></script>
 </body>
 </html>
 
@@ -83,8 +73,6 @@
       <div class="hero-image">
         <img id="profile-pic" src="" alt="Profile picture"> </div>
     </div>
-    <div id="flying-forest-wrapper">
-    <div id="world"></div> </div>
   </section>
 
   <!-- 关于部分 -->
@@ -178,6 +166,5 @@
 
   <!-- JavaScript -->
   <script type="module" src="./js/main.js"></script>
-  <script src="./js/flying-forest.js"></script>
 </body>
 </html>
