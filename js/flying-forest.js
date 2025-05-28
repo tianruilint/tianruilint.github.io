@@ -1,47 +1,46 @@
-// js/flying-forest.js
+// js/flying-forest.js (作为普通 <script> 引入, 不是 type="module")
 
-// (1) 脚本顶部的变量声明 (使用 let 或 const)
-let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let land, sky, forest, sun, airplane, orbit;
-let hemisphereLight, shadowLight;
-let mousePos = { x: 0, y: 0 };
-const offSet = -600;
+// (1) 脚本顶部的变量声明 (使用 var 或 let, 在非模块脚本中 var 会成为全局)
+// 为了减少全局污染，可以将这些变量包裹在一个立即执行函数表达式 (IIFE) 中，
+// 但暴露需要给 main.js 调用的接口到 window 对象。
+// 这里为了简化，我们先按原样处理，但请注意全局变量。
+
+var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
+var land, sky, forest, sun, airplane, orbit; // 飞行树林的主要对象
+var hemisphereLight, shadowLight;            // 灯光
+var mousePos = { x: 0, y: 0 };               // 鼠标位置
+var offSet = -600;                           // 原始脚本中的偏移量
 
 // (2) 主题颜色定义
-const GameColors = {
+const GameColors = { // 使用 const 防止意外修改
     day: {
         red: 0xf25346, yellow: 0xedeb27, white: 0xd8d0d1, brown: 0x59332e,
         pink: 0xF5986E, brownDark: 0x23190f, blue: 0x68c3c0, green: 0x458248,
         purple: 0x551A8B, lightgreen: 0x629265,
-        sceneFog: 0xf7d9aa,
-        sceneBgCSS: 'linear-gradient(#e4e0ba, #f7d9aa)'
+        sceneFog: 0xf7d9aa, // 白天雾效
+        sceneBgCSS: 'linear-gradient(#e4e0ba, #f7d9aa)' // 白天CSS背景
     },
-    night: { // 您为夜晚模式定义的颜色
+    night: {
         red: 0x8f352c, yellow: 0x6d6b15, white: 0xaaaaaa, brown: 0x3a221d,
         pink: 0xcf7a5c, brownDark: 0x1a120a, blue: 0x346160, green: 0x2a4f2c,
         purple: 0x4a0d6b, lightgreen: 0x315933,
-        sceneFog: 0x181825,
-        sceneBgCSS: 'linear-gradient(#202030, #101020)'
+        sceneFog: 0x181825, // 深夜雾效
+        sceneBgCSS: 'linear-gradient(#202030, #101020)' // 深夜CSS背景
     }
 };
 let currentColors = GameColors.day; // 默认是白天颜色
 
-// (3) 移除旧的全局 Colors 对象 (非常重要!)
-// 确保文件顶部没有类似 var Colors = { ... }; 这样的声明了。
-// 您之前提供的 flying-forest.js 文件头部有这个，现在它应该被 GameColors 和 currentColors 替代。
+// (3) 所有 Three.js 对象的构造函数定义
+// 确保定义顺序：被依赖的构造函数在前。
+// 关键：修改所有构造函数内部对颜色的引用，从旧的全局 Colors 改为 currentColors
 
-// (4) 所有 Three.js 对象的构造函数 (Cloud, Sky, Tree 等)
-// 确保它们的定义顺序是正确的，例如 Cloud 必须在 Sky 之前定义。
-// 并且，这些构造函数内部必须使用 `currentColors.颜色名` 来获取颜色。
-
-// 例如:
-Cloud = function () { // 必须在 Sky 之前定义
+Cloud = function () {
     this.mesh = new THREE.Object3D();
     var geom = new THREE.DodecahedronGeometry(20, 0);
     var mat = new THREE.MeshPhongMaterial({ color: currentColors.white }); // 使用 currentColors
     var nBlocs = 3 + Math.floor(Math.random() * 3);
     for (var i = 0; i < nBlocs; i++) {
-        var m = new THREE.Mesh(geom, mat.clone());
+        var m = new THREE.Mesh(geom, mat.clone()); // 克隆材质
         m.position.x = i * 15;
         m.position.y = Math.random() * 10;
         m.position.z = Math.random() * 10;
@@ -53,62 +52,12 @@ Cloud = function () { // 必须在 Sky 之前定义
     }
 };
 
-var petalColorsOriginalDay = [GameColors.day.red, GameColors.day.yellow, GameColors.day.blue];
-
-Flower = function () { // 必须在 Forest 之前定义
-    this.mesh = new THREE.Object3D();
-    var geomStem = new THREE.BoxGeometry(5, 50, 5, 1, 1, 1);
-    var matStem = new THREE.MeshPhongMaterial({color: currentColors.green, shading: THREE.FlatShading});
-    var stem = new THREE.Mesh(geomStem, matStem);
-    stem.castShadow = false;
-    stem.receiveShadow = true;
-    this.mesh.add(stem);
-
-    var geomPetalCore = new THREE.BoxGeometry(10, 10, 10, 1, 1, 1);
-    var matPetalCore = new THREE.MeshPhongMaterial({color: currentColors.yellow, shading: THREE.FlatShading});
-    var petalCoreMesh = new THREE.Mesh(geomPetalCore, matPetalCore); // 使用局部变量 petalCoreMesh
-    petalCoreMesh.castShadow = false;
-    petalCoreMesh.receiveShadow = true;
-
-    var randomDayPetalColorHex = petalColorsOriginalDay[Math.floor(Math.random() * petalColorsOriginalDay.length)];
-    var petalColorToUseHex;
-
-    if (currentColors === GameColors.night) {
-        if (randomDayPetalColorHex === GameColors.day.red) petalColorToUseHex = currentColors.red;
-        else if (randomDayPetalColorHex === GameColors.day.yellow) petalColorToUseHex = currentColors.yellow;
-        else if (randomDayPetalColorHex === GameColors.day.blue) petalColorToUseHex = currentColors.blue;
-        else petalColorToUseHex = currentColors.pink; // Fallback for night
-    } else {
-        petalColorToUseHex = randomDayPetalColorHex;
-    }
-
-    var geomPetal = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1);
-    var matPetal = new THREE.MeshBasicMaterial({color: petalColorToUseHex });
-    geomPetal.vertices[5].y -= 4; geomPetal.vertices[4].y -= 4;
-    geomPetal.vertices[7].y += 4; geomPetal.vertices[6].y += 4;
-    geomPetal.translate(12.5, 0, 3);
-    var petals = [];
-    for (var i = 0; i < 4; i++) {
-        petals[i] = new THREE.Mesh(geomPetal, matPetal.clone()); // 克隆材质
-        petals[i].rotation.z = i * Math.PI / 2;
-        petals[i].castShadow = true;
-        petals[i].receiveShadow = true;
-    }
-    petalCoreMesh.add(petals[0], petals[1], petals[2], petals[3]);
-    petalCoreMesh.position.y = 25;
-    petalCoreMesh.position.z = 3;
-    this.mesh.add(petalCoreMesh);
-};
-
-
-// Tree, Land, Orbit, Sun, AirPlane, Forest, Sky 等构造函数都需要在这里定义，并确保内部使用 currentColors
-// Sky 构造函数示例 (依赖 Cloud)
 Sky = function () {
     this.mesh = new THREE.Object3D();
     this.nClouds = 25;
     var stepAngle = Math.PI * 2 / this.nClouds;
     for (var i = 0; i < this.nClouds; i++) {
-        var c = new Cloud(); // Cloud 构造函数必须在 Sky 之前定义
+        var c = new Cloud(); // Cloud 必须已定义
         var a = stepAngle * i;
         var h = 800 + Math.random() * 200;
         c.mesh.position.y = Math.sin(a) * h;
@@ -121,178 +70,480 @@ Sky = function () {
     }
 };
 
-// (5) 场景创建、灯光、对象实例化函数
-// (createScene, handleWindowResize, createLights, createPlane, createOrbit, createSun, createLand, createForest, createSky)
-// 这些函数内部在实例化时会使用上面已定义的构造函数
-// 例如 createScene:
-function createScene() {
-    const worldWrapper = document.getElementById('flying-forest-wrapper');
-    if (!worldWrapper) {
-        console.error("Flying forest wrapper not found for size reference.");
-        HEIGHT = window.innerHeight / 3; // Fallback if wrapper not found
-        WIDTH = window.innerWidth;
+Tree = function () {
+    this.mesh = new THREE.Object3D();
+    var matTreeLeaves = new THREE.MeshPhongMaterial({ color: currentColors.green, shading: THREE.FlatShading });
+    var geonTreeBase = new THREE.BoxGeometry(10, 20, 10);
+    var matTreeBase = new THREE.MeshBasicMaterial({ color: currentColors.brown }); // 使用 currentColors
+    var treeBase = new THREE.Mesh(geonTreeBase, matTreeBase);
+    treeBase.castShadow = true;
+    treeBase.receiveShadow = true;
+    this.mesh.add(treeBase);
+
+    var geomTreeLeaves1 = new THREE.CylinderGeometry(1, 12 * 3, 12 * 3, 4);
+    var treeLeaves1 = new THREE.Mesh(geomTreeLeaves1, matTreeLeaves.clone());
+    treeLeaves1.castShadow = true;
+    treeLeaves1.receiveShadow = true;
+    treeLeaves1.position.y = 20;
+    this.mesh.add(treeLeaves1);
+
+    var geomTreeLeaves2 = new THREE.CylinderGeometry(1, 9 * 3, 9 * 3, 4);
+    var treeLeaves2 = new THREE.Mesh(geomTreeLeaves2, matTreeLeaves.clone());
+    treeLeaves2.castShadow = true;
+    treeLeaves2.position.y = 40;
+    treeLeaves2.receiveShadow = true;
+    this.mesh.add(treeLeaves2);
+
+    var geomTreeLeaves3 = new THREE.CylinderGeometry(1, 6 * 3, 6 * 3, 4);
+    var treeLeaves3 = new THREE.Mesh(geomTreeLeaves3, matTreeLeaves.clone());
+    treeLeaves3.castShadow = true;
+    treeLeaves3.position.y = 55;
+    treeLeaves3.receiveShadow = true;
+    this.mesh.add(treeLeaves3);
+};
+
+const petalColorsOriginalDayForConstructor = [GameColors.day.red, GameColors.day.yellow, GameColors.day.blue];
+
+Flower = function () {
+    this.mesh = new THREE.Object3D();
+    var geomStem = new THREE.BoxGeometry(5, 50, 5, 1, 1, 1);
+    var matStem = new THREE.MeshPhongMaterial({color: currentColors.green, shading: THREE.FlatShading});
+    var stem = new THREE.Mesh(geomStem, matStem);
+    stem.castShadow = false;
+    stem.receiveShadow = true;
+    this.mesh.add(stem);
+
+    var geomPetalCore = new THREE.BoxGeometry(10, 10, 10, 1, 1, 1);
+    var matPetalCore = new THREE.MeshPhongMaterial({color: currentColors.yellow, shading: THREE.FlatShading});
+    var petalCoreMesh = new THREE.Mesh(geomPetalCore, matPetalCore);
+    petalCoreMesh.castShadow = false;
+    petalCoreMesh.receiveShadow = true;
+    
+    // 在构造时就决定花瓣颜色
+    var randomDayPetalColorHex = petalColorsOriginalDayForConstructor[Math.floor(Math.random() * petalColorsOriginalDayForConstructor.length)];
+    var petalColorToUseHex;
+
+    if (currentColors === GameColors.night) {
+        if (randomDayPetalColorHex === GameColors.day.red) petalColorToUseHex = currentColors.red;
+        else if (randomDayPetalColorHex === GameColors.day.yellow) petalColorToUseHex = currentColors.yellow;
+        else if (randomDayPetalColorHex === GameColors.day.blue) petalColorToUseHex = currentColors.blue;
+        else petalColorToUseHex = currentColors.pink;
     } else {
-        HEIGHT = worldWrapper.clientHeight;
-        WIDTH = worldWrapper.clientWidth;
+        petalColorToUseHex = randomDayPetalColorHex;
+    }
+    // 存储原始的白天颜色，以便主题切换时能正确映射
+    this.mesh.userData.originalDayPetalColor = randomDayPetalColorHex;
+
+
+    var geomPetal = new THREE.BoxGeometry(15, 20, 5, 1, 1, 1);
+    var matPetal = new THREE.MeshBasicMaterial({color: petalColorToUseHex });
+    geomPetal.vertices[5].y -= 4; geomPetal.vertices[4].y -= 4;
+    geomPetal.vertices[7].y += 4; geomPetal.vertices[6].y += 4;
+    geomPetal.translate(12.5, 0, 3);
+    var petals = [];
+    for (var i = 0; i < 4; i++) {
+        petals[i] = new THREE.Mesh(geomPetal, matPetal.clone());
+        petals[i].rotation.z = i * Math.PI / 2;
+        petals[i].castShadow = true;
+        petals[i].receiveShadow = true;
+    }
+    petalCoreMesh.add(petals[0], petals[1], petals[2], petals[3]);
+    petalCoreMesh.position.y = 25;
+    petalCoreMesh.position.z = 3;
+    this.mesh.add(petalCoreMesh);
+};
+
+Forest = function () { // Forest 依赖 Tree 和 Flower
+    this.mesh = new THREE.Object3D();
+    this.nTrees = 300;
+    var stepAngleTree = Math.PI * 2 / this.nTrees; // Renamed to avoid conflict
+    for (var i = 0; i < this.nTrees; i++) {
+        var t = new Tree();
+        var a = stepAngleTree * i;
+        var h = 605;
+        t.mesh.position.y = Math.sin(a) * h;
+        t.mesh.position.x = Math.cos(a) * h;
+        t.mesh.rotation.z = a + (Math.PI / 2) * 3;
+        t.mesh.position.z = 0 - Math.random() * 600;
+        var s = .3 + Math.random() * .75;
+        t.mesh.scale.set(s, s, s);
+        this.mesh.add(t.mesh);
     }
 
-    scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(currentColors.sceneFog, 100, 950);
-    aspectRatio = WIDTH / HEIGHT;
-    fieldOfView = 60;
-    nearPlane = 1;
-    farPlane = 10000;
-    camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
-    camera.position.x = 0;
-    camera.position.y = 150;
-    camera.position.z = 100;
-    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(WIDTH, HEIGHT);
-    renderer.shadowMap.enabled = true;
-    container = document.getElementById('world');
-    if (!container) {
-        console.error("Flying forest: #world container not found for renderer!");
-        return; // 无法继续
+    this.nFlowers = 350;
+    var stepAngleFlower = Math.PI * 2 / this.nFlowers; // Renamed
+    for (var j = 0; j < this.nFlowers; j++) { // Changed loop variable
+        var f = new Flower();
+        var a_flower = stepAngleFlower * j; // Renamed
+        var h_flower = 605; // Renamed
+        f.mesh.position.y = Math.sin(a_flower) * h_flower;
+        f.mesh.position.x = Math.cos(a_flower) * h_flower;
+        f.mesh.rotation.z = a_flower + (Math.PI / 2) * 3;
+        f.mesh.position.z = 0 - Math.random() * 600;
+        var s_flower = .1 + Math.random() * .3; // Renamed
+        f.mesh.scale.set(s_flower, s_flower, s_flower);
+        this.mesh.add(f.mesh);
     }
-    container.innerHTML = ''; // 清理旧的渲染器（如果重复初始化）
-    container.appendChild(renderer.domElement);
-    window.addEventListener('resize', handleWindowResize, false);
+};
+
+Land = function () {
+    var geom = new THREE.CylinderGeometry(600, 600, 1700, 40, 10);
+    geom.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI / 2)); // 使用 applyMatrix4
+    var mat = new THREE.MeshPhongMaterial({ color: currentColors.lightgreen, shading: THREE.FlatShading });
+    this.mesh = new THREE.Mesh(geom, mat);
+    this.mesh.receiveShadow = true;
+};
+
+Orbit = function () {
+    var geom = new THREE.Object3D(); // THREE.Object3D 是构造函数
+    this.mesh = geom; // 直接赋值
+};
+
+Sun = function () {
+    this.mesh = new THREE.Object3D();
+    var sunGeom = new THREE.SphereGeometry(400, 20, 10);
+    var sunMat = new THREE.MeshPhongMaterial({ color: currentColors.yellow, shading: THREE.FlatShading });
+    var sunMesh = new THREE.Mesh(sunGeom, sunMat);
+    sunMesh.castShadow = false;
+    sunMesh.receiveShadow = false;
+    this.mesh.add(sunMesh);
+};
+
+AirPlane = function () {
+    this.mesh = new THREE.Object3D();
+    // Cockpit
+    var geomCockpit = new THREE.BoxGeometry(80,50,50,1,1,1);
+    var matCockpit = new THREE.MeshPhongMaterial({color:currentColors.red, shading:THREE.FlatShading});
+    geomCockpit.vertices[4].y-=10; geomCockpit.vertices[4].z+=20;
+    geomCockpit.vertices[5].y-=10; geomCockpit.vertices[5].z-=20;
+    geomCockpit.vertices[6].y+=30; geomCockpit.vertices[6].z+=20;
+    geomCockpit.vertices[7].y+=30; geomCockpit.vertices[7].z-=20;
+    var cockpit = new THREE.Mesh(geomCockpit, matCockpit);
+    cockpit.castShadow = true; cockpit.receiveShadow = true;
+    this.mesh.add(cockpit);
+
+    // Engine
+    var geomEngine = new THREE.BoxGeometry(20,50,50,1,1,1);
+    var matEngine = new THREE.MeshPhongMaterial({color:currentColors.white, shading:THREE.FlatShading});
+    var engine = new THREE.Mesh(geomEngine, matEngine);
+    engine.position.x = 40; engine.castShadow = true; engine.receiveShadow = true;
+    this.mesh.add(engine);
+
+    // Tail Plane
+    var geomTailPlane = new THREE.BoxGeometry(15,20,5,1,1,1);
+    var matTailPlane = new THREE.MeshPhongMaterial({color:currentColors.red, shading:THREE.FlatShading});
+    var tailPlane = new THREE.Mesh(geomTailPlane, matTailPlane);
+    tailPlane.position.set(-35,25,0); tailPlane.castShadow = true; tailPlane.receiveShadow = true;
+    this.mesh.add(tailPlane);
+
+    // Wings
+    var geomSideWing = new THREE.BoxGeometry(40,4,150,1,1,1); // Corrected width from 4 to 8 as per example, but using 4 from original
+    var matSideWing = new THREE.MeshPhongMaterial({color:currentColors.red, shading:THREE.FlatShading});
+    var sideWingTop = new THREE.Mesh(geomSideWing, matSideWing.clone());
+    var sideWingBottom = new THREE.Mesh(geomSideWing, matSideWing.clone());
+    sideWingTop.castShadow = true; sideWingTop.receiveShadow = true;
+    sideWingBottom.castShadow = true; sideWingBottom.receiveShadow = true;
+    sideWingTop.position.set(20,12,0);
+    sideWingBottom.position.set(20,-3,0); // Adjusted y based on visual, original has -8
+    this.mesh.add(sideWingTop);
+    this.mesh.add(sideWingBottom);
+
+    // Windshield
+    var geomWindshield = new THREE.BoxGeometry(3,15,20,1,1,1);
+    var matWindshield = new THREE.MeshPhongMaterial({color:currentColors.white,transparent:true, opacity:.3, shading:THREE.FlatShading});;
+    var windshield = new THREE.Mesh(geomWindshield, matWindshield);
+    windshield.position.set(5,27,0); // Adjusted x from 15 to 5 based on cockpit front
+    windshield.castShadow = true; windshield.receiveShadow = true;
+    this.mesh.add(windshield);
+
+    // Propeller
+    var geomPropeller = new THREE.BoxGeometry(20,10,10,1,1,1);
+    geomPropeller.vertices[4].y-=5; geomPropeller.vertices[4].z+=5;
+    geomPropeller.vertices[5].y-=5; geomPropeller.vertices[5].z-=5;
+    geomPropeller.vertices[6].y+=5; geomPropeller.vertices[6].z+=5;
+    geomPropeller.vertices[7].y+=5; geomPropeller.vertices[7].z-=5;
+    var matPropeller = new THREE.MeshPhongMaterial({color:currentColors.brown, shading:THREE.FlatShading});
+    this.propeller = new THREE.Mesh(geomPropeller, matPropeller);
+    this.propeller.castShadow = true; this.propeller.receiveShadow = true;
+
+    // Blades
+    var geomBlade1 = new THREE.BoxGeometry(1,100,10,1,1,1); // Blade 1 (vertical)
+    var geomBlade2 = new THREE.BoxGeometry(1,10,100,1,1,1); // Blade 2 (horizontal) - dimensions from original, might need check
+    var matBlade = new THREE.MeshPhongMaterial({color:currentColors.brownDark, shading:THREE.FlatShading});
+    var blade1 = new THREE.Mesh(geomBlade1, matBlade.clone());
+    blade1.position.set(8,0,0); blade1.castShadow = true; blade1.receiveShadow = true;
+    var blade2 = new THREE.Mesh(geomBlade2, matBlade.clone()); // Corrected to use geomBlade2
+    blade2.position.set(8,0,0); blade2.castShadow = true; blade2.receiveShadow = true;
+    this.propeller.add(blade1); this.propeller.add(blade2); // Add individually
+    this.propeller.position.set(50,0,0);
+    this.mesh.add(this.propeller);
+
+    // Wheels
+    var wheelProtecGeom = new THREE.BoxGeometry(30,15,10,1,1,1);
+    var wheelProtecMat = new THREE.MeshPhongMaterial({color:currentColors.white, shading:THREE.FlatShading});
+    var wheelProtecR = new THREE.Mesh(wheelProtecGeom, wheelProtecMat.clone());
+    wheelProtecR.position.set(25,-20,25);
+    this.mesh.add(wheelProtecR);
+
+    var wheelTireGeom = new THREE.BoxGeometry(24,24,4);
+    var wheelTireMat = new THREE.MeshPhongMaterial({color:currentColors.brownDark, shading:THREE.FlatShading});
+    var wheelTireR = new THREE.Mesh(wheelTireGeom, wheelTireMat.clone());
+    wheelTireR.position.set(25,-28,25);
+
+    var wheelAxisGeom = new THREE.BoxGeometry(10,10,6);
+    var wheelAxisMat = new THREE.MeshPhongMaterial({color:currentColors.brown, shading:THREE.FlatShading});
+    var wheelAxis = new THREE.Mesh(wheelAxisGeom, wheelAxisMat.clone());
+    wheelTireR.add(wheelAxis);
+    this.mesh.add(wheelTireR);
+
+    var wheelProtecL = wheelProtecR.clone();
+    wheelProtecL.position.z = -wheelProtecR.position.z;
+    this.mesh.add(wheelProtecL);
+
+    var wheelTireL = wheelTireR.clone();
+    wheelTireL.position.z = -wheelTireR.position.z;
+    this.mesh.add(wheelTireL);
+
+    var wheelTireB = wheelTireR.clone();
+    wheelTireB.scale.set(.5,.5,.5);
+    wheelTireB.position.set(-35,-5,0);
+    this.mesh.add(wheelTireB);
+
+    var suspensionGeom = new THREE.BoxGeometry(4,20,4);
+    suspensionGeom.applyMatrix4(new THREE.Matrix4().makeTranslation(0,10,0)); // use applyMatrix4
+    var suspensionMat = new THREE.MeshPhongMaterial({color:currentColors.red, shading:THREE.FlatShading});
+    var suspension = new THREE.Mesh(suspensionGeom, suspensionMat.clone());
+    suspension.position.set(-35,-5,0);
+    suspension.rotation.z = -.3;
+    this.mesh.add(suspension);
+};
+
+// Fox 构造函数 (如果使用的话，也需要用 currentColors)
+// Fox = function () { ... };
+
+// (5) 核心 Three.js 初始化与循环函数
+function createLights() {
+    hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9)
+    shadowLight = new THREE.DirectionalLight(0xffffff, .9);
+    shadowLight.position.set(0,350,350); // Adjusted position from original script's 150,350,350
+    shadowLight.castShadow = true;
+    shadowLight.shadow.camera.left = -650; // Adjusted from -400
+    shadowLight.shadow.camera.right = 650; // Adjusted from 400
+    shadowLight.shadow.camera.top = 650;   // Adjusted from 400
+    shadowLight.shadow.camera.bottom = -650;// Adjusted from -400
+    shadowLight.shadow.camera.near = 1;
+    shadowLight.shadow.camera.far = 1000;
+    shadowLight.shadow.mapSize.width = 2048;
+    shadowLight.shadow.mapSize.height = 2048;
+    scene.add(hemisphereLight);
+    scene.add(shadowLight);
 }
 
+function createSky(){ sky = new Sky(); sky.mesh.position.y = offSet; scene.add(sky.mesh); }
+function createLand(){ land = new Land(); land.mesh.position.y = offSet; scene.add(land.mesh); }
+function createOrbit(){ orbit = new Orbit(); orbit.mesh.position.y = offSet; orbit.mesh.rotation.z = -Math.PI/6; scene.add(orbit.mesh); }
+function createForest(){ forest = new Forest(); forest.mesh.position.y = offSet; scene.add(forest.mesh); }
+function createSun(){ sun = new Sun(); sun.mesh.scale.set(1,1,.3); sun.mesh.position.set(0,-30,-850); scene.add(sun.mesh); } // Keep sun small and distant
+function createPlane(){ airplane = new AirPlane(); airplane.mesh.scale.set(.35,.35,.35); airplane.mesh.position.set(-40,110,-250); scene.add(airplane.mesh); }
+// function createFox(){ fox = new Fox(); ... } // 如果使用 Fox
 
-// (6) 动画/逻辑更新函数
-// (updatePlane, normalize, loop, handleMouseMove)
-
-// (7) 暴露给 main.js 的接口函数
-window.initFlyingForest = function() {
-    const worldContainer = document.getElementById('world');
-    if (!worldContainer || worldContainer.classList.contains('ff-initialized')) {
+function loop(){
+    if (!scene || !renderer || !camera) { // 确保场景已初始化
+        requestAnimationFrame(loop); // 尝试下一帧
         return;
     }
-    worldContainer.classList.add('ff-initialized');
-    worldContainer.style.background = currentColors.sceneBgCSS; // 设置初始背景
+    if (land && land.mesh) land.mesh.rotation.z += .005;
+    if (orbit && orbit.mesh) orbit.mesh.rotation.z += .001;
+    if (sky && sky.mesh) sky.mesh.rotation.z += .003;
+    if (forest && forest.mesh) forest.mesh.rotation.z += .005;
+
+    if (airplane) updatePlane(); // 只有 airplane 存在时才更新
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+}
+
+function updatePlane() {
+    if (!airplane || !airplane.mesh || !airplane.propeller) return; // 防御式编程
+    var targetY = normalize(mousePos.y, -.75, .75, 50, 190);
+    var targetX = normalize(mousePos.x, -.75, .75, -100, -20); // 保持飞机在视野左侧
+    airplane.mesh.position.y += (targetY - airplane.mesh.position.y) * 0.1;
+    airplane.mesh.position.x += (targetX - airplane.mesh.position.x) * 0.1; // 让飞机在X轴也跟随鼠标（小范围）
+    airplane.mesh.rotation.z = (targetY - airplane.mesh.position.y)*0.0128;
+    airplane.mesh.rotation.x = (airplane.mesh.position.y - targetY)*0.0064;
+    airplane.propeller.rotation.x += 0.3;
+}
+
+function normalize(v,vmin,vmax,tmin, tmax){
+    var nv = Math.max(Math.min(v,vmax), vmin);
+    var dv = vmax-vmin;
+    var pc = (nv-vmin)/dv;
+    var dt = tmax-tmin;
+    var tv = tmin + (pc*dt);
+    return tv;
+}
+
+function handleMouseMove(event) {
+    var tx = -1 + (event.clientX / WIDTH) * 2;
+    var ty = 1 - (event.clientY / HEIGHT) * 2;
+    mousePos = {x:tx, y:ty};
+}
+
+function handleWindowResize() {
+    const worldWrapper = document.getElementById('flying-forest-wrapper');
+    if (!worldWrapper || !renderer || !camera) return;
+
+    HEIGHT = worldWrapper.clientHeight;
+    WIDTH = worldWrapper.clientWidth;
+    
+    renderer.setSize(WIDTH, HEIGHT);
+    camera.aspect = WIDTH / HEIGHT;
+    camera.updateProjectionMatrix();
+}
+
+// (6) 暴露给 main.js 的接口函数
+window.initFlyingForest = function() {
+    const worldContainer = document.getElementById('world');
+    if (!worldContainer ) { // 移除 ff-initialized 检查，确保能重新初始化
+        console.error("Flying forest: #world container not found for init!");
+        return;
+    }
+    // worldContainer.classList.add('ff-initialized'); // 可以暂时去掉这个，方便调试
+    worldContainer.innerHTML = ''; // 清空容器，防止重复添加canvas
+    
+    // 应用当前主题颜色到脚本内部的 currentColors
+    const currentSiteThemeForInit = document.documentElement.getAttribute('data-theme') || 'light';
+    currentColors = (currentSiteThemeForInit === 'dark') ? GameColors.night : GameColors.day;
+    worldContainer.style.background = currentColors.sceneBgCSS;
 
     createScene();
-    if (!scene || !renderer) return; // 如果场景或渲染器未成功创建
+    if (!scene || !renderer) { // 确保 createScene 成功
+        console.error("Scene or renderer not created in initFlyingForest.");
+        return;
+    }
 
     createLights();
-    // 确保这些在 createScene 之后被调用，因为它们依赖 scene
-    createPlane();
-    createOrbit();
-    createSun();
-    createLand();
-    createForest();
     createSky();
+    createLand();
+    createOrbit();
+    createForest();
+    createSun();
+    createPlane();
+    // createFox(); // 如果要使用
 
+    document.removeEventListener('mousemove', handleMouseMove); // 移除旧监听器以防重复
     document.addEventListener('mousemove', handleMouseMove, false);
+    
+    window.removeEventListener('resize', handleWindowResize); // 移除旧监听器
+    window.addEventListener('resize', handleWindowResize, false);
+
+    handleWindowResize(); // 初始调整大小
     loop();
-    handleWindowResize(); // 调用以确保初始尺寸正确
 };
 
 window.updateFlyingForestTheme = function(theme) {
-    // ... (与之前提供的版本类似的颜色更新逻辑，确保所有对象颜色都被更新)
-    // 例如:
     currentColors = (theme === 'dark') ? GameColors.night : GameColors.day;
+
     const worldEl = document.getElementById('world');
     if (worldEl) {
         worldEl.style.background = currentColors.sceneBgCSS;
     }
+
     if (scene && scene.fog) {
         scene.fog.color.setHex(currentColors.sceneFog);
     }
-    // ... (更新 land, sky (遍历云朵), forest (遍历树木和花朵), sun, airplane 等对象的材质颜色)
-    // ... 务必保证在调用此函数时，这些对象(land, sky等)已经被 initFlyingForest 中的对应 createXXX 函数实例化了。
 
-    // 示例: Land (假设land变量已由createLand()赋值)
-    if (land && land.mesh && land.mesh.material) {
-        land.mesh.material.color.setHex(currentColors.lightgreen);
-    }
-    // 示例: Sky (遍历云朵)
-    if (sky && sky.mesh && sky.mesh.children) {
+    // 更新材质颜色 - 这部分需要非常小心和细致
+    if (land && land.mesh.material) land.mesh.material.color.setHex(currentColors.lightgreen);
+
+    if (sky && sky.mesh) {
         sky.mesh.children.forEach(cloudMesh => {
             if (cloudMesh.material) cloudMesh.material.color.setHex(currentColors.white);
         });
     }
-    // 示例: Sun
+
     if (sun && sun.mesh && sun.mesh.children[0] && sun.mesh.children[0].material) {
         sun.mesh.children[0].material.color.setHex(currentColors.yellow);
     }
     
-    // 对 Airplane 的颜色更新需要更细致，因为它有多个部件和颜色
-    if (airplane && airplane.mesh && airplane.mesh.children) {
-        const partColorMap = {
-            dayOriginal: { // 存储白天主题下各个部件的原始颜色（16进制表示）
-                cockpit: GameColors.day.red,
-                engine: GameColors.day.white,
-                tailPlane: GameColors.day.red,
-                sideWing: GameColors.day.red, // 假设 sideWingTop 和 Bottom 颜色一样
-                windshield: GameColors.day.white, // 注意透明度
-                propellerHub: GameColors.day.brown,
-                propellerBlade: GameColors.day.brownDark,
-                wheelProtec: GameColors.day.white,
-                wheelTire: GameColors.day.brownDark,
-                wheelAxis: GameColors.day.brown,
-                suspension: GameColors.day.red
-            },
-            targetColors: { // 当前主题的目标颜色
-                red: currentColors.red,
-                white: currentColors.white,
-                brown: currentColors.brown,
-                brownDark: currentColors.brownDark
-            }
-        };
-
-        // 这是一个简化的逻辑，您可能需要根据飞机部件的实际材质来调整
-        airplane.mesh.children.forEach(child => {
-            if (!child.material) { // 例如 propeller 主 Object3D
-                if (child.name === "propeller" || (child.children && child.children.length > 0 && child.children[0].geometry.type === "BoxGeometry")) { // Propeller group
-                    child.children.forEach(bladeOrHub => {
-                        if (bladeOrHub.material) {
-                            if (bladeOrHub.material.color.getHex() === partColorMap.dayOriginal.propellerHub || bladeOrHub.material.color.getHex() === GameColors.night.brown) {
-                                bladeOrHub.material.color.setHex(partColorMap.targetColors.brown);
-                            } else if (bladeOrHub.material.color.getHex() === partColorMap.dayOriginal.propellerBlade || bladeOrHub.material.color.getHex() === GameColors.night.brownDark) {
-                                bladeOrHub.material.color.setHex(partColorMap.targetColors.brownDark);
-                            }
-                        }
-                    });
-                }
-                return;
-            }
-
-            const originalHex = child.material.color.getHex();
-            if(originalHex === partColorMap.dayOriginal.cockpit || originalHex === GameColors.night.red) child.material.color.setHex(partColorMap.targetColors.red);
-            else if(originalHex === partColorMap.dayOriginal.engine || originalHex === GameColors.night.white) child.material.color.setHex(partColorMap.targetColors.white);
-            // ... 为飞机其他部件添加类似的颜色映射逻辑 ...
-        });
-    }
-
-    // ... 对于 Forest (Trees and Flowers) 的颜色更新会更复杂，因为它们是随机生成的。
-    // 您可能需要在创建 Tree 和 Flower 时，给它们的 Mesh 或 Material 添加一个标记来识别它们属于哪个类别（如树干、树叶、花瓣颜色种类）
-    // 然后在 updateFlyingForestTheme 中遍历 forest.mesh.children 来更新。
-    // 例如，对于 Tree:
     if (forest && forest.mesh) {
         forest.mesh.children.forEach(objectInForest => {
-            // 假设 Tree 的结构是 this.mesh 包含 treeBase 和 treeLeaves1/2/3
-            if (objectInForest.children && objectInForest.children.length >= 4 && objectInForest.children[0].geometry.type === 'BoxGeometry') { // 这是一个简化的Tree判断
-                objectInForest.children[0].material.color.setHex(currentColors.brown); // treeBase
-                objectInForest.children[1].material.color.setHex(currentColors.green); // treeLeaves1
-                objectInForest.children[2].material.color.setHex(currentColors.green); // treeLeaves2
-                objectInForest.children[3].material.color.setHex(currentColors.green); // treeLeaves3
+            if (objectInForest.children && objectInForest.children.length > 0) {
+                // Tree heuristic
+                if (objectInForest.children.length >= 4 && objectInForest.children[0].geometry.type === 'BoxGeometry') {
+                    objectInForest.children[0].material.color.setHex(currentColors.brown); // treeBase
+                    objectInForest.children[1].material.color.setHex(currentColors.green); // treeLeaves1
+                    objectInForest.children[2].material.color.setHex(currentColors.green); // treeLeaves2
+                    objectInForest.children[3].material.color.setHex(currentColors.green); // treeLeaves3
+                }
+                // Flower heuristic
+                else if (objectInForest.children.length >= 2 && objectInForest.children[0].geometry.type === "BoxGeometry" && objectInForest.children[1].geometry.type === "BoxGeometry") {
+                    objectInForest.children[0].material.color.setHex(currentColors.green); // Stem
+                    const petalCoreMesh = objectInForest.children[1];
+                    if (petalCoreMesh.material) petalCoreMesh.material.color.setHex(currentColors.yellow); // Petal Core
+                    
+                    const originalDayPetalColor = objectInForest.userData.originalDayPetalColor || petalColorsOriginalDayForConstructor[0]; // Fallback
+                    let petalColorToUseHex;
+                    if (currentColors === GameColors.night) {
+                        if (originalDayPetalColor === GameColors.day.red) petalColorToUseHex = currentColors.red;
+                        else if (originalDayPetalColor === GameColors.day.yellow) petalColorToUseHex = currentColors.yellow;
+                        else if (originalDayPetalColor === GameColors.day.blue) petalColorToUseHex = currentColors.blue;
+                        else petalColorToUseHex = currentColors.pink;
+                    } else {
+                        petalColorToUseHex = originalDayPetalColor;
+                    }
+                    petalCoreMesh.children.forEach(petalMesh => {
+                        if (petalMesh.material) petalMesh.material.color.setHex(petalColorToUseHex);
+                    });
+                }
             }
-            // 对 Flower 的判断和颜色更新逻辑会更复杂，因为花瓣颜色是随机的
-            // 您需要一种方法来映射“白天的红色花瓣”到“夜晚的深红色花瓣”
+        });
+    }
+
+    if (airplane && airplane.mesh) {
+        const dayColors = GameColors.day;
+        const nightColors = GameColors.night;
+        function getMappedColor(originalDayHex) {
+            if (theme === 'dark') {
+                if (originalDayHex === dayColors.red) return nightColors.red;
+                if (originalDayHex === dayColors.white) return nightColors.white;
+                if (originalDayHex === dayColors.brown) return nightColors.brown;
+                if (originalDayHex === dayColors.brownDark) return nightColors.brownDark;
+                // Add more mappings if needed
+            }
+            return originalDayHex; // Default to original if no mapping or day theme
+        }
+
+        airplane.mesh.children.forEach(child => {
+            if (child.material) {
+                const originalHex = child.material.userData.originalColorHex; // Assume you stored this at creation
+                if (originalHex) {
+                    child.material.color.setHex(getMappedColor(originalHex));
+                } else { // Fallback if originalColorHex was not stored
+                    if (child.material.color.getHex() === dayColors.red || child.material.color.getHex() === nightColors.red) child.material.color.setHex(currentColors.red);
+                    else if (child.material.color.getHex() === dayColors.white || child.material.color.getHex() === nightColors.white) child.material.color.setHex(currentColors.white);
+                    else if (child.material.color.getHex() === dayColors.brown || child.material.color.getHex() === nightColors.brown) child.material.color.setHex(currentColors.brown);
+                    else if (child.material.color.getHex() === dayColors.brownDark || child.material.color.getHex() === nightColors.brownDark) child.material.color.setHex(currentColors.brownDark);
+                }
+            }
+             if (child.name === "propeller" || (child.children && child.children.length > 0 && child.children[0].geometry.type === "BoxGeometry" && child.children[0].geometry.parameters.width === 1)){ // Propeller group
+                child.children.forEach(bladeOrHub => { // Blades or Hub
+                    if(bladeOrHub.material){
+                        if (bladeOrHub.material.color.getHex() === dayColors.brown || bladeOrHub.material.color.getHex() === nightColors.brown) {
+                             bladeOrHub.material.color.setHex(currentColors.brown); // Hub
+                        } else if (bladeOrHub.material.color.getHex() === dayColors.brownDark || bladeOrHub.material.color.getHex() === nightColors.brownDark) {
+                             bladeOrHub.material.color.setHex(currentColors.brownDark); // Blades
+                        }
+                    }
+                });
+            }
         });
     }
 
 
-    if(renderer && scene && camera) renderer.render(scene, camera); // 主题更新后重新渲染一次
+    if(renderer && scene && camera) renderer.render(scene, camera); // Re-render
 };
 
-// (8) 如果之前有 window.addEventListener('load', init, false); 请删除它，
-// 因为初始化将由 main.js 的 initWebsite 控制。
-
-// (9) 如果您选择内嵌 Three.js r86 库，将那段巨大的 (function (l, xa) { ... }) 代码粘贴在此文件最末尾。
-// 这段代码在您提供的 "飞行树林代码组件.txt" 的末尾。
 
 (function (l, xa) {
     "object" === typeof exports && "undefined" !== typeof module ? xa(exports) : "function" === typeof define && define.amd ? define(["exports"], xa) : xa(l.THREE = l.THREE || {})
@@ -15432,4 +15683,3 @@ window.updateFlyingForestTheme = function(theme) {
     };
     Object.defineProperty(l, "__esModule", {value: !0})
 });
-
