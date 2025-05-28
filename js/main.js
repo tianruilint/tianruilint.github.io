@@ -11,85 +11,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // 初始化网站
 async function initWebsite() {
+  // 等待配置加载完成
   configLoader.addLoadListener(() => {
-    initTheme(); // initTheme 现在会处理飞行树林的初始主题
+    // 初始化主题
+    initTheme();
+    
+    // 初始化语言切换
     initLanguageSwitch();
+    
+    // 初始化导航
     initNavigation();
+    
+    // 渲染各部分内容
     renderContent();
+    
+    // 初始化交互功能
     initInteractions();
-
-    // 初始化飞行树林
-    if (document.getElementById('world') && typeof window.initFlyingForest === "function") {
-        window.initFlyingForest();
-
-        // 初始化后，根据当前主题设置一次颜色
-         const currentSiteTheme = document.documentElement.getAttribute('data-theme') || 'light';
-         if (typeof window.updateFlyingForestTheme === "function") {
-            window.updateFlyingForestTheme(currentSiteTheme);
-         }
-    }
-
+    
+    // 显示网站内容（移除加载状态）
     document.body.classList.remove('loading');
     document.body.classList.add('loaded');
   });
 }
 
-function initTheme() {
-  const themeSwitch = document.getElementById('theme-switch');
-  if (!themeSwitch) return;
-
-  const savedTheme = localStorage.getItem('theme');
-  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let currentTheme = savedTheme || (prefersDarkScheme ? 'dark' : 'light');
-
-  document.documentElement.setAttribute('data-theme', currentTheme);
-  updateThemeSwitchText(currentTheme);
-
-  // 调用飞行树林主题更新函数
-  if (typeof window.updateFlyingForestTheme === "function") {
-    window.updateFlyingForestTheme(currentTheme);
-  }
-
-  themeSwitch.addEventListener('click', () => {
-    const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeSwitchText(newTheme);
-
-    // 当主题切换时，再次调用飞行树林主题更新
-    if (typeof window.updateFlyingForestTheme === "function") {
-      window.updateFlyingForestTheme(newTheme);
-    }
-  });
-}
-
 // 初始化主题
 function initTheme() {
+  // 获取主题切换按钮
   const themeSwitch = document.getElementById('theme-switch');
   if (!themeSwitch) return;
-
+  
+  // 从本地存储获取主题设置
   const savedTheme = localStorage.getItem('theme');
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let currentTheme = savedTheme || (prefersDarkScheme ? 'dark' : 'light');
-
-  document.documentElement.setAttribute('data-theme', currentTheme);
-  updateThemeSwitchText(currentTheme);
-
-  // 调用飞行树林主题更新函数 (如果它已定义)
-  if (typeof window.updateFlyingForestTheme === "function") {
-    window.updateFlyingForestTheme(currentTheme);
+  
+  // 设置初始主题
+  let currentTheme = savedTheme;
+  if (!currentTheme) {
+    currentTheme = prefersDarkScheme ? 'dark' : 'light';
   }
-
+  
+  // 应用主题
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  
+  // 更新主题切换按钮文本
+  updateThemeSwitchText(currentTheme);
+  
+  // 添加主题切换事件
   themeSwitch.addEventListener('click', () => {
     const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     updateThemeSwitchText(newTheme);
-
-    // 当主题切换时，再次调用飞行树林主题更新
-    if (typeof window.updateFlyingForestTheme === "function") {
-      window.updateFlyingForestTheme(newTheme);
-    }
   });
 }
 
