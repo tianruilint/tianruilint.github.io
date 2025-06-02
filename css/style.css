@@ -283,25 +283,20 @@ border-bottom: none;
 
 /* 英雄部分 */
 .hero {
-  display: flex;
-  flex-direction: column; /* Stack hero content and forest */
-  /* Let height be determined by content. Original hero might have had min-height: 100vh */
-  /* If your original .hero was exactly 100vh, this section will now naturally become scrollable if content exceeds 100vh */
-  padding-top: 70px; /* Adjust to your navbar height */
+  display: flex; /* 保持 flex 布局 */
+  align-items: center;
+  min-height: 100vh; /* 使用 min-height 保证内容过多时也能显示 */
+  height: auto; /* 覆盖之前的固定 height */
+  padding-top: 80px; /* 稍微增加一点顶部空间 */
+  padding-bottom: 60px; /* 增加底部空间 */
 }
 
 .hero .hero-container {
-  /* This is your original hero content area */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 3rem;
+  display: flex;           /* 使用 flex 让文本和图片并排 */
+  align-items: center;     /* 垂直居中对齐 */
+  justify-content: space-between; /* 两端对齐（或用 space-around, center）*/
+  gap: 3rem;               /* 文本和图片之间的间距 */
   width: 100%;
-  /* Ensure it takes up substantial space, e.g., like it did before */
-  /* You might set a min-height here if needed, e.g., min-height: calc(100vh - 70px - 400px - 60px);
-     (100vh - navbar - forest height - bottom padding)
-     Or let its content define its height naturally. */
-  padding-bottom: 3rem; /* Space between original hero content and the forest component */
 }
 
 .hero-content {
@@ -343,41 +338,6 @@ border-bottom: none;
   border-radius: 50%;     /* ***核心：设置为圆形*** */
   border: 6px solid var(--bg-secondary); /* 可选：添加边框 */
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 可选：添加阴影 */
-}
-
-#flying-forest-wrapper {
-  position: relative; /* For the gradient pseudo-element */
-  width: 100%;
-  height: 400px; /* --- ADJUST THIS HEIGHT AS DESIRED --- */
-  /* Example: min-height: 300px; max-height: 500px; */
-  overflow: hidden; /* Essential for containing the Three.js canvas */
-}
-
-/* Gradient effect for the top boundary of the forest */
-#flying-forest-wrapper::before {
-  content: '';
-  position: absolute;
-  bottom: 100%; /* Position gradient directly above the wrapper */
-  left: 0;
-  width: 100%;
-  height: 60px; /* Height of the gradient fade, adjust as needed */
-  background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
-  z-index: 5; /* Ensure gradient is visually on top of the seam */
-  pointer-events: none; /* Allow clicks to pass through */
-}
-
-/* Dark mode for the gradient */
-[data-theme="dark"] #flying-forest-wrapper::before {
-  background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%); /* var(--bg-primary) will be dark */
-}
-
-#world {
-  /* position: absolute; top: 0; left: 0; */ /* Original style from component */
-  width: 100%;
-  height: 100%;
-  overflow: hidden; /* This is critical */
-  /* The 'background' (sky gradient) is now set by js/flying-forest-logic.js */
-  /* z-index: 1; /* If needed to be under the gradient */
 }
 
 /* 关于部分 */
@@ -795,11 +755,10 @@ footer {
     padding-top: 100px; /* 增加移动端顶部距离 */
     text-align: center; /* 文本居中 */
  }
-  .hero .hero-container {
-    /* Adjust hero content layout if necessary for smaller screens */
-    padding-bottom: 2rem;
-     min-height: auto; /* Allow it to shrink more on mobile if needed */
-  }
+ .hero .hero-container {
+   flex-direction: column-reverse; /* 图片在上，文本在下 */
+   gap: 2rem;
+ }
  .hero-content {
    max-width: 100%; /* 文本宽度占满 */
  }
@@ -881,13 +840,6 @@ footer {
   .mobile-menu a:last-child {
     border-bottom: none;
   }
-
-  #flying-forest-wrapper {
-    height: 300px; /* Smaller height for forest on tablets/mobile */
-  }
-  #flying-forest-wrapper::before {
-    height: 40px; /* Smaller gradient fade */
-  }
 }
 
 @media (max-width: 576px) {
@@ -916,11 +868,6 @@ footer {
     margin-top: 0.5rem;
   }
 }
-
-@media (max-width: 480px) {
-  #flying-forest-wrapper {
-    height: 250px; /* Even smaller on very small screens */
-  }
 
 /* 弹窗样式 */
 .modal {
