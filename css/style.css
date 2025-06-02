@@ -340,6 +340,75 @@ border-bottom: none;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 可选：添加阴影 */
 }
 
+/* Wrapper for the Flying Forest component and gradient */
+#flying-forest-wrapper {
+  position: relative; /* For the gradient pseudo-element */
+  width: 100%;
+  height: 450px; /* Adjust height as desired for the forest component */
+  /* Or use aspect ratio for responsive height: */
+  /* height: 0; */
+  /* padding-bottom: 75%; /* 4:3 aspect ratio, adjust as needed */
+  margin-top: 3rem; /* Space between hero content and forest. Adjust as needed. */
+  overflow: hidden; /* Important to contain the Three.js canvas */
+}
+
+/* Gradient effect for the top boundary */
+#flying-forest-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -60px; /* Start gradient above the forest, adjust for desired fade length */
+  left: 0;
+  width: 100%;
+  height: 60px; /* Height of the gradient fade */
+  background: linear-gradient(to bottom, var(--bg-primary) 0%, transparent 100%);
+  z-index: 5; /* Ensure gradient is above the forest's own background but below hero content if overlapping */
+  pointer-events: none; /* Allow clicks to pass through */
+}
+
+/* The #world div where Three.js renders */
+#world {
+  position: absolute; /* Fill the wrapper */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* This is critical */
+  /* The 'background' (sky gradient) is now set by js/flying-forest-logic.js */
+  z-index: 1;
+}
+
+/* Adjustments for the hero section to accommodate the new component */
+.hero {
+  display: flex;
+  flex-direction: column; /* Stack hero-container and flying-forest-wrapper */
+  /* min-height: 100vh; /* Keep this if you want hero + forest to try and fill viewport */
+  /* You might not need padding-bottom if the forest fills space */
+}
+
+.hero .hero-container {
+  /* Ensures existing hero content doesn't shrink if flexbox tries to make space */
+  flex-shrink: 0;
+}
+
+
+/* Responsive adjustments for the forest component */
+@media (max-width: 768px) {
+  #flying-forest-wrapper {
+    height: 350px; /* Example: smaller height on mobile */
+    margin-top: 2rem;
+  }
+  #flying-forest-wrapper::before {
+    top: -40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  #flying-forest-wrapper {
+    height: 300px; /* Even smaller on very small screens */
+  }
+}
+
 /* 关于部分 */
 .about-content {
   display: grid;
