@@ -1,169 +1,120 @@
-
-    var ThemeColors = {
-        light: {
-            red: 0xf25346,
-            yellow: 0xedeb27,
-            white: 0xd8d0d1,
-            brown: 0x59332e,
-            pink: 0xF5986E,
-            brownDark: 0x23190f,
-            blue: 0x68c3c0,
-            green: 0x458248, // Original tree leaves
-            purple: 0x551A8B,
-            lightgreen: 0x629265, // Original land color
-            fog: 0xf7d9aa,       // Original fog color
-            skyGradientStart: '#e4e0ba', // Original gradient from component
-            skyGradientEnd: '#f7d9aa'    // Original gradient from component
-        },
-        dark: { // Night theme colors (adjust these to your liking)
-            red: 0x9E2A2B,       // Darker Red
-            yellow: 0x7E6C0A,    // Darker Yellow (less bright for moon/sun)
-            white: 0x606060,     // Darker White / Grey for clouds
-            brown: 0x3D2B1F,     // Darker Brown for tree trunks
-            pink: 0x8C4A4A,      // Muted Pink/Red for flowers
-            brownDark: 0x1A120B, // Very Dark Brown for airplane propeller
-            blue: 0x3B6A68,      // Desaturated dark blue/teal for airplane accents
-            green: 0x1E5631,     // Darker Green for tree leaves
-            purple: 0x3A0A54,    // Darker Purple for flowers
-            lightgreen: 0x2A3F2A, // Darker land color (e.g., dark moss)
-            fog: 0x0D1326,       // Dark blue/purple fog
-            skyGradientStart: '#080F20', // Dark sky gradient start (e.g., very dark blue)
-            skyGradientEnd: '#151D36'    // Dark sky gradient end (e.g., dark indigo)
-        }
-    };
-
-    var Colors; // This will hold the current theme's colors
-    var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    Colors = ThemeColors[currentTheme]; // Initialize Colors
-
-    var worldElement; // Declare globally for access in functions
-
-    function updateForestThemeColors(theme) {
-        currentTheme = theme;
-        Colors = ThemeColors[theme]; // Update the global Colors object
-
-        if (scene && scene.fog) {
-            scene.fog.color.setHex(Colors.fog);
-        }
-        if (renderer) { // Ensure renderer is available
-            // The canvas background itself is transparent (alpha:true in WebGLRenderer)
-            // The #world div's background is what we change
-            if (worldElement) {
-                worldElement.style.background = `linear-gradient(${Colors.skyGradientStart}, ${Colors.skyGradientEnd})`;
-            }
-        }
-
-        // Update material colors (example for land and sun)
-        if (land && land.mesh && land.mesh.material) {
-            land.mesh.material.color.setHex(Colors.lightgreen);
-        }
-        if (sun && sun.mesh && sun.mesh.children.length > 0 && sun.mesh.children[0].material) {
-            sun.mesh.children[0].material.color.setHex(Colors.yellow);
-        }
-        if (airplane && airplane.mesh) {
-            // Example: Airplane cockpit color
-            const cockpit = airplane.mesh.children.find(child => child.geometry.type === "BoxGeometry" && child.material.color.getHex() === ThemeColors.light.red); // Find by original color
-            if (cockpit) cockpit.material.color.setHex(Colors.red);
-
-            const engine = airplane.mesh.children.find(child => child.geometry.type === "BoxGeometry" && child.material.color.getHex() === ThemeColors.light.white);
-            if (engine) engine.material.color.setHex(Colors.white); // Example for engine
-
-            // You'll need to do this for other parts of the airplane, trees, flowers if their colors
-            // are hardcoded or need to change significantly.
-        }
-        // Trees might be tricky if they share materials. If `matTreeLeaves` is global:
-        if (typeof matTreeLeaves !== 'undefined' && matTreeLeaves) {
-            matTreeLeaves.color.setHex(Colors.green);
-        }
-        if (typeof matTreeBase !== 'undefined' && matTreeBase) {
-            matTreeBase.color.setHex(Colors.brown);
-        }
-        // For clouds, if `Cloud` constructor is available and its material reference can be updated
-        if (sky && sky.mesh && typeof Cloud !== 'undefined') {
-            sky.mesh.children.forEach(cloudMesh => {
-                if (cloudMesh.children.length > 0) {
-                    cloudMesh.children.forEach(m => m.material.color.setHex(Colors.white));
-                }
-            });
-        }
+var ThemeColors = {
+    light: {
+        red: 0xf25346, yellow: 0xedeb27, white: 0xd8d0d1, brown: 0x59332e,
+        pink: 0xF5986E, brownDark: 0x23190f, blue: 0x68c3c0, green: 0x458248,
+        purple: 0x551A8B, lightgreen: 0x629265, fog: 0xf7d9aa,
+        skyGradientStart: '#e4e0ba', skyGradientEnd: '#f7d9aa'
+    },
+    dark: { // ADJUST THESE NIGHT COLORS TO YOUR LIKING
+        red: 0x9E2A2B, yellow: 0x7E6C0A, white: 0x606060, brown: 0x3D2B1F,
+        pink: 0x8C4A4A, brownDark: 0x1A120B, blue: 0x3B6A68, green: 0x1E5631,
+        purple: 0x3A0A54, lightgreen: 0x2A3F2A, fog: 0x0D1326,
+        skyGradientStart: '#080F20', skyGradientEnd: '#151D36'
     }
-    
-    
-    var Colors = {
-        red: 0xf25346,
-        yellow: 0xedeb27,
-        white: 0xd8d0d1,
-        brown: 0x59332e,
-        pink: 0xF5986E,
-        brownDark: 0x23190f,
-        blue: 0x68c3c0,
-        green: 0x458248,
-        purple: 0x551A8B,
-        lightgreen: 0x629265,
-    };
-    var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
+};
 
-    function createScene() {
-        worldElement = document.getElementById('world'); // Get the #world div
+var Colors; // This will be assigned within updateForestThemeColors
+var worldElement; // Will be assigned once DOM is loaded
 
-        // Use the wrapper's dimensions for the canvas
-        HEIGHT = worldElement.clientHeight;
-        WIDTH = worldElement.clientWidth;
+// Declare other global variables from your original forest script if they are needed globally
+var scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
+var hemisphereLight, shadowLight;
+var land, sky, forest, orbit, sun, airplane; // Assuming these are your global Three.js objects
+var matTreeLeaves, matTreeBase; // If these materials are global in your original script
 
-        scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(Colors.fog, 100, 950); // Use themed fog color
+// Function to update colors based on theme
+function updateForestThemeColors(theme) {
+    Colors = ThemeColors[theme] || ThemeColors.light; // Fallback to light if theme is undefined
 
-        aspectRatio = WIDTH / HEIGHT;
-        fieldOfView = 60; // You can adjust this
-        nearPlane = 1;
-        farPlane = 10000;
-        camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
-        camera.position.x = 0;
-        camera.position.y = 100; // Adjust Y position to view the scene better
-        camera.position.z = 300; // Pull camera back a bit
-        camera.lookAt(new THREE.Vector3(0,50,0)); // Look slightly down if needed
-
-        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(WIDTH, HEIGHT);
-        renderer.shadowMap.enabled = true;
-
-        // Set initial background for #world div using themed colors
+    if (scene && scene.fog) {
+        scene.fog.color.setHex(Colors.fog);
+    }
+    if (worldElement) {
         worldElement.style.background = `linear-gradient(${Colors.skyGradientStart}, ${Colors.skyGradientEnd})`;
-
-        container = worldElement; // The #world div is the container
-        container.appendChild(renderer.domElement);
-
-        window.addEventListener('resize', handleWindowResize, false);
     }
 
-    function handleWindowResize() {
-        if (worldElement) { // Check if worldElement exists
-            HEIGHT = worldElement.clientHeight;
-            WIDTH = worldElement.clientWidth;
-            renderer.setSize(WIDTH, HEIGHT);
-            camera.aspect = WIDTH / HEIGHT;
-            camera.updateProjectionMatrix();
-        }
+    // Update materials - this part is crucial and specific to your component's structure
+    // You need to ensure materials are updated *after* they are created.
+    if (land && land.mesh && land.mesh.material) {
+        land.mesh.material.color.setHex(Colors.lightgreen);
+    }
+    if (sun && sun.mesh && sun.mesh.children.length > 0 && sun.mesh.children[0].material) {
+        sun.mesh.children[0].material.color.setHex(Colors.yellow);
+    }
+    if (airplane && airplane.mesh && airplane.mesh.children.length > 0) {
+        // Example: Find the cockpit by its original light theme color and update it
+        const lightCockpitColorHex = ThemeColors.light.red;
+        const cockpitMaterial = airplane.mesh.children.find(child => child.material && child.material.color && child.material.color.getHex() === lightCockpitColorHex);
+        if (cockpitMaterial) cockpitMaterial.material.color.setHex(Colors.red);
+        
+        const lightWhiteColorHex = ThemeColors.light.white;
+        const engineMaterial = airplane.mesh.children.find(child => child.material && child.material.color && child.material.color.getHex() === lightWhiteColorHex);
+        if (engineMaterial) engineMaterial.material.color.setHex(Colors.white); // For engine, windshield etc.
     }
 
-    var hemispshereLight, shadowLight;
-
-    function createLights() {
-        hemisphereLight = new THREE.HemisphereLight(0xaaaaaa, 0x000000, .9)
-        shadowLight = new THREE.DirectionalLight(0xffffff, .9);
-        shadowLight.position.set(0, 350, 350);
-        shadowLight.castShadow = true;
-        shadowLight.shadow.camera.left = -650;
-        shadowLight.shadow.camera.right = 650;
-        shadowLight.shadow.camera.top = 650;
-        shadowLight.shadow.camera.bottom = -650;
-        shadowLight.shadow.camera.near = 1;
-        shadowLight.shadow.camera.far = 1000;
-        shadowLight.shadow.mapSize.width = 2048;
-        shadowLight.shadow.mapSize.height = 2048;
-        scene.add(hemisphereLight);
-        scene.add(shadowLight)
+    // Tree materials might be globally defined or within the Tree constructor
+    // If global (like in your provided snippet):
+    if (typeof matTreeLeaves !== 'undefined' && matTreeLeaves && matTreeLeaves.color) {
+         matTreeLeaves.color.setHex(Colors.green);
     }
+    if (typeof matTreeBase !== 'undefined' && matTreeBase && matTreeBase.color) {
+         matTreeBase.color.setHex(Colors.brown);
+    }
+    
+    // Cloud materials
+    if (sky && sky.mesh && typeof Cloud !== 'undefined') { // Check if Cloud constructor was defined
+         sky.mesh.children.forEach(cloudCluster => { // Assuming sky.mesh contains clusters of clouds
+             cloudCluster.children.forEach(individualCloudBlock => {
+                 if (individualCloudBlock.material && individualCloudBlock.material.color) {
+                     individualCloudBlock.material.color.setHex(Colors.white);
+                 }
+             });
+         });
+    }
+    
+    // Flowers: Similar logic - find flower part materials and update their colors
+    // This part depends heavily on how you structured Flower material creation.
+    // If petalColors array is used, you might need to re-initialize flowers or update their materials.
+}
+
+// === PASTE THE REST OF YOUR `飞行树林代码组件.txt` JAVASCRIPT HERE ===
+// (Starting from where you define `scene, camera, ...`
+//  and including `createScene`, `handleWindowResize`, object constructors like `Land`, `AirPlane`, `Tree`,
+//  `createLights`, `loop`, `handleMouseMove`, and the `init` function.
+//  Make sure to REMOVE the `var Colors = {...}` definition from here if you pasted it above with ThemeColors)
+
+// Example of how createScene might look after modification:
+function createScene() {
+    // worldElement should be already defined by DOMContentLoaded
+    HEIGHT = worldElement.clientHeight;
+    WIDTH = worldElement.clientWidth;
+
+    scene = new THREE.Scene();
+    // Fog color is now set by updateForestThemeColors, but ensure Colors is initialized
+    scene.fog = new THREE.Fog(Colors.fog, 100, 950);
+    
+    aspectRatio = WIDTH / HEIGHT;
+    fieldOfView = 60;
+    nearPlane = 1;
+    farPlane = 10000;
+    camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane);
+    camera.position.x = 0;
+    camera.position.y = 100; // Adjust for new placement
+    camera.position.z = 350; // Adjust for new placement
+    camera.lookAt(new THREE.Vector3(0, 50, 0));
+
+
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(WIDTH, HEIGHT);
+    renderer.shadowMap.enabled = true;
+
+    // Background style for #world is set in updateForestThemeColors
+    // worldElement.style.background = `linear-gradient(${Colors.skyGradientStart}, ${Colors.skyGradientEnd})`; //This will be handled by updateForestThemeColors
+
+    container = worldElement;
+    container.appendChild(renderer.domElement);
+    window.addEventListener('resize', handleWindowResize, false);
+}
 
     Land = function () {
         var geom = new THREE.CylinderGeometry(600, 600, 1700, 40, 10);
@@ -643,23 +594,21 @@
 
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize with the correct theme colors before Three.js scene is created
-        const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        updateForestThemeColors(initialTheme);
-
-        // Ensure the 'world' element is present before initializing the Three.js scene
-        if (document.getElementById('world')) {
-            if (typeof init === 'function') {
-                init(); // Call the main init function from your flying forest script
-            } else {
-                console.error('Flying Forest "init" function is not defined.');
-            }
-        } else {
-            console.error('The "#world" element for the Flying Forest is not found in the DOM.');
+        worldElement = document.getElementById('world');
+        if (!worldElement) {
+            console.error('Flying Forest: #world element not found!');
+            return;
         }
 
-        // Listen to theme changes from your main.js
-        // This uses a MutationObserver to detect when 'data-theme' attribute changes on <html>
+        const initialTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        updateForestThemeColors(initialTheme); // Initialize Colors object and apply theme
+
+        if (typeof init === 'function') {
+            init(); // Call your original init function that sets up the Three.js scene
+        } else {
+            console.error('Flying Forest "init" function is not defined.');
+        }
+
         const observer = new MutationObserver(mutationsList => {
             for (let mutation of mutationsList) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
