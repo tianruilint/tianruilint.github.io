@@ -33,6 +33,11 @@
     "sendMessage": "Send Message",
     "contactMeButton": "Contact Me",
     "allProjects": "All",
+    "contactLabels": {
+      "email": "Email",
+      "phone": "Phone",
+      "location": "Location"
+    },
     "formLabels": {
       "name": "Name",
       "email": "Email",
