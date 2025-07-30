@@ -111,9 +111,10 @@ function updateLanguageSwitchText() {
 
 // 初始化导航
 function initNavigation() {
-  // 获取导航链接
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const mobileMenuLinks = document.querySelectorAll('#mobile-menu a'); // 同时选择移动菜单链接
+  // 获取导航链接 - 修复选择器
+  const navLinks = document.querySelectorAll('.nav-links .label');
+  const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+  const radioInputs = document.querySelectorAll('.nav-links input[type="radio"]');
 
   // 更新导航文本
   const updateLinkText = (link) => {
@@ -121,12 +122,40 @@ function initNavigation() {
     if (section) {
       // 使用 configLoader 获取当前语言的文本
       const text = configLoader.getConfig('profile', `navigation.${section}`);
-      if (text) link.textContent = text;
+      if (text) {
+        const span = link.querySelector('span');
+        if (span) {
+          span.textContent = text;
+        } else {
+          link.textContent = text;
+        }
+      }
     }
-};
+  };
   
   navLinks.forEach(updateLinkText);
   mobileMenuLinks.forEach(updateLinkText);
+
+  // 添加导航点击事件
+  navLinks.forEach((link, index) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const section = link.getAttribute('data-section');
+      if (section) {
+        // 选中对应的radio按钮
+        const radioInput = document.getElementById(`rd-${index + 1}`);
+        if (radioInput) {
+          radioInput.checked = true;
+        }
+        
+        // 滚动到对应部分
+        const targetSection = document.getElementById(section);
+        if (targetSection) {
+          targetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
 
   // 移动端菜单
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -150,20 +179,17 @@ function initNavigation() {
       const scrollPosition = window.scrollY;
       const sections = document.querySelectorAll('section'); // 获取所有 section
 
-      sections.forEach(section => {
+      sections.forEach((section, index) => {
         const sectionTop = section.offsetTop - 100; // 调整偏移量
         const sectionBottom = sectionTop + section.offsetHeight;
         const sectionId = section.getAttribute('id');
 
         if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-          // 移除所有活动类
-          navLinks.forEach(link => link.classList.remove('active'));
-          mobileMenuLinks.forEach(link => link.classList.remove('active')); // 也处理移动菜单
-
-          // 添加活动类到当前部分的链接
-          const activeLinkSelector = `.nav-links a[href="#<span class="math-inline">\{sectionId\}"\], \#mobile\-menu a\[href\="\#</span>{sectionId}"]`;
-          const activeLinks = document.querySelectorAll(activeLinkSelector);
-          activeLinks.forEach(link => link.classList.add('active'));
+          // 选中对应的radio按钮
+          const radioInput = document.getElementById(`rd-${index + 1}`);
+          if (radioInput) {
+            radioInput.checked = true;
+          }
         }
       });
     });
@@ -471,12 +497,30 @@ function renderContact() {
   }
 
   if (profile && profile.contact) {
-    const emailElement = document.querySelector('.contact-email .contact-text');
-    const phoneElement = document.querySelector('.contact-phone .contact-text');
-    const locationElement = document.querySelector('.contact-location .contact-text');
+    // 修复联系信息选择器
+    const emailElement = document.querySelector('.contact-email .contact-details p');
+    const phoneElement = document.querySelector('.contact-phone .contact-details p');
+    const locationElement = document.querySelector('.contact-location .contact-details p');
+    
+    // 更新联系信息标题
+    const emailTitle = document.querySelector('.contact-email .contact-details h4');
+    const phoneTitle = document.querySelector('.contact-phone .contact-details h4');
+    const locationTitle = document.querySelector('.contact-location .contact-details h4');
+    
     if (emailElement) emailElement.textContent = profile.contact.email;
     if (phoneElement) phoneElement.textContent = profile.contact.phone;
     if (locationElement) locationElement.textContent = profile.contact.location;
+    
+    // 更新联系信息标题文本
+    if (emailTitle && profile.ui && profile.ui.contactLabels) {
+      emailTitle.textContent = profile.ui.contactLabels.email || '邮箱';
+    }
+    if (phoneTitle && profile.ui && profile.ui.contactLabels) {
+      phoneTitle.textContent = profile.ui.contactLabels.phone || '电话';
+    }
+    if (locationTitle && profile.ui && profile.ui.contactLabels) {
+      locationTitle.textContent = profile.ui.contactLabels.location || '位置';
+    }
 
     const socialLinks = document.querySelector('.social-links');
     if (socialLinks && profile.contact.social) {
@@ -561,14 +605,45 @@ function renderFooter() {
 }
 // 初始化交互功能
 function initInteractions() {
+  // 添加导航跳转功能
+  const navLabels = document.querySelectorAll('.nav-links .label');
+  navLabels.forEach(label => {
+    label.addEventListener('click', (e) => {
+      e.preventDefault();
+      const section = label.getAttribute('data-section');
+      if (section) {
+        const targetElement = document.getElementById(section);
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      }
+    });
+  });
+
   // 保留平滑滚动逻辑
   const scrollLinks = document.querySelectorAll(
-    '.nav-links a[href^="#"]:not([href="#"])'       // 桌面导航 (排除 href="#")
-    + ', #mobile-menu a[href^="#"]:not([href="#"])'  // 移动菜单 (排除 href="#")
+    '#mobile-menu a[href^="#"]:not([href="#"])'  // 移动菜单 (排除 href="#")
     + ', .footer-links a[href^="#"]:not([href="#"])' // 页脚链接 (排除 href="#")
     + ', .hero-buttons a[href^="#contact"]'       // Hero 联系按钮
     // 你可以根据需要添加其他特定区域的链接选择器
   );
+
+  scrollLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
 
     // 密码保护简历下载逻辑
     const resumeDownloadBtn = document.getElementById('resume-download-btn');

@@ -33,6 +33,11 @@
     "sendMessage": "发送消息",
     "contactMeButton": "联系我",
     "allProjects": "全部",
+    "contactLabels": {
+      "email": "邮箱",
+      "phone": "电话",
+      "location": "位置"
+    },
     "formLabels": {
       "name": "姓名",
       "email": "邮箱",
