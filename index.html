@@ -1,387 +1,323 @@
-<!DOCTYPE html>
-<html lang="zh">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <base href="./">
-  <title>个人网站</title>
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/loader.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ruilin Tian — RTL, ASIC and SoC design</title>
+<meta name="description" content="Ruilin Tian is an M.Sc. student in the joint TUM–NTU Integrated Circuit Design programme in Singapore, working on RTL design, verification, SoC integration and physical design.">
+<meta name="theme-color" content="#05070a">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/touch-icon.png">
+<link rel="canonical" href="https://tianruilint.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ruilin Tian">
+<meta property="og:title" content="Ruilin Tian — RTL, ASIC and SoC design">
+<meta property="og:description" content="M.Sc. student in the joint TUM–NTU Integrated Circuit Design programme in Singapore. RTL design, verification, SoC integration and physical design, shown with the evidence behind each result.">
+<meta property="og:url" content="https://tianruilint.github.io/">
+<meta property="og:image" content="https://tianruilint.github.io/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ruilin Tian, with the routed layout of an RV32I processor core on a rendered wafer">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Ruilin Tian","url":"https://tianruilint.github.io/","email":"mailto:tianruilint@gmail.com","jobTitle":"M.Sc. student, Integrated Circuit Design","affiliation":[{"@type":"CollegeOrUniversity","name":"Technical University of Munich"},{"@type":"CollegeOrUniversity","name":"Nanyang Technological University"}],"address":{"@type":"PostalAddress","addressCountry":"SG"},"sameAs":["https://www.linkedin.com/in/ruilintian1115/","https://github.com/tianruilint"]}</script>
+<link rel="preload" href="fonts/barlow-condensed-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="assets/poster-start.webp" media="(min-width: 761px)" fetchpriority="high">
+<link rel="preload" as="image" href="assets/poster-start-m.webp" media="(max-width: 760px)" fetchpriority="high">
+<link rel="stylesheet" href="css/site.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/three-addons/"}}</script>
 </head>
+<body>
+<a class="skip" href="#about">Skip to content</a>
 
-<div id="password-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" id="password-close-btn">&times;</span>
-    <h3 id="modal-title">需要密码</h3>
-    <p id="modal-prompt">请输入密码以下载简历:</p>
-    <div class="modal-input-group">
-      <input type="password" id="password-input" placeholder="输入密码">
-      <p id="password-error" class="error-message"></p>
-    </div>
-    <button id="password-submit" class="btn">确认</button>
-  </div>
+<div class="world" aria-hidden="true">
+  <picture class="poster" id="poster">
+    <source media="(max-width: 760px)" srcset="assets/poster-start-m.webp">
+    <img src="assets/poster-start.webp" alt="" decoding="async">
+  </picture>
+  <canvas id="world"></canvas>
+  <div class="veil"></div>
+  <div class="grain"></div>
 </div>
 
-<script type="module" src="./js/main.js"></script>
-</body>
-</html>
+<header class="top" id="header">
+  <a class="mark" href="#top" aria-label="Ruilin Tian, back to the start"><span class="mark-die">RT</span><span class="mark-name">Ruilin Tian</span></a>
+  <nav class="nav" aria-label="Main">
+    <a href="#rtl">RTL</a><a href="#layout">Layout</a><a href="#system">System</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+  </nav>
+  <button class="motion" id="motionToggle" type="button" aria-pressed="false"><span class="motion-ico" aria-hidden="true"></span><span class="motion-txt">Pause motion</span></button>
+  <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open navigation"><span></span><span></span></button>
+</header>
+<nav class="drawer" id="drawer" aria-label="Mobile" aria-hidden="true">
+  <a href="#rtl"><i>01</i>RTL</a><a href="#layout"><i>02</i>Layout</a><a href="#system"><i>03</i>System</a><a href="#experience"><i>04</i>Experience</a><a href="#contact"><i>05</i>Contact</a>
+</nav>
 
-<body class="loading">
-  <!-- 加载指示器 -->
-  <div class="loader">
-    <div class="truckWrapper">
-      <div class="truckBody">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 198 93"
-          class="trucksvg"
-        >
-          <path
-            stroke-width="3"
-            stroke="#282828"
-            fill="#F83D3D"
-            d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z"
-          ></path>
-          <path
-            stroke-width="3"
-            stroke="#282828"
-            fill="#7D7C7C"
-            d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z"
-          ></path>
-          <path
-            stroke-width="2"
-            stroke="#282828"
-            fill="#282828"
-            d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z"
-          ></path>
-          <rect
-            stroke-width="2"
-            stroke="#282828"
-            fill="#FFFCAB"
-            rx="1"
-            height="7"
-            width="5"
-            y="63"
-            x="187"
-          ></rect>
-          <rect
-            stroke-width="2"
-            stroke="#282828"
-            fill="#282828"
-            rx="1"
-            height="11"
-            width="4"
-            y="81"
-            x="193"
-          ></rect>
-          <rect
-            stroke-width="3"
-            stroke="#282828"
-            fill="#DFDFDF"
-            rx="2.5"
-            height="90"
-            width="121"
-            y="1.5"
-            x="6.5"
-          ></rect>
-          <rect
-            stroke-width="2"
-            stroke="#282828"
-            fill="#DFDFDF"
-            rx="2"
-            height="4"
-            width="6"
-            y="84"
-            x="1"
-          ></rect>
-        </svg>
-      </div>
-      <div class="truckTires">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 30 30"
-          class="tiresvg"
-        >
-          <circle
-            stroke-width="3"
-            stroke="#282828"
-            fill="#282828"
-            r="13.5"
-            cy="15"
-            cx="15"
-          ></circle>
-          <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
-        </svg>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 30 30"
-          class="tiresvg"
-        >
-          <circle
-            stroke-width="3"
-            stroke="#282828"
-            fill="#282828"
-            r="13.5"
-            cy="15"
-            cx="15"
-          ></circle>
-          <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
-        </svg>
-      </div>
-      <div class="road"></div>
+<ol class="rail" id="rail" aria-hidden="true">
+  <li data-for="top"><span>Wafer</span></li>
+  <li data-for="about"><span>Profile</span></li>
+  <li data-for="rtl"><span>RTL</span></li>
+  <li data-for="layout"><span>Layout</span></li>
+  <li data-for="system"><span>System</span></li>
+  <li data-for="experience"><span>Experience</span></li>
+  <li data-for="contact"><span>Contact</span></li>
+</ol>
 
-      <svg
-        xml:space="preserve"
-        viewBox="0 0 453.459 453.459"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        xmlns="http://www.w3.org/2000/svg"
-        id="Capa_1"
-        version="1.1"
-        fill="#000000"
-        class="lampPost"
-      >
-        <path
-          d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
-c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514
-c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16
-c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914
-h-0.797c-5.068,0-9.174,4.108-9.174,9.177c0,2.844,1.293,5.383,3.321,7.066c-3.432,27.933-26.851,95.744-8.226,115.459v11.202h45.75
-v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795
-V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z
-M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017
-h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"
-        ></path>
-      </svg>
+<main id="main">
+
+<!-- ============================================================ HERO -->
+<section class="hero" id="top" data-pose="hero" data-veil="0" aria-labelledby="hero-name">
+  <div class="hero-inner">
+    <p class="over"><span>Integrated circuit design</span><i></i><span>Singapore</span></p>
+    <h1 id="hero-name"><span class="ln"><span>Ruilin</span></span><span class="ln"><span>Tian</span></span></h1>
+    <div class="hero-foot">
+      <p class="focus"><span>RTL</span><span>ASIC</span><span>SoC</span></p>
+      <p class="degree">M.Sc. student, Integrated Circuit Design<br>Joint TUM–NTU programme</p>
     </div>
   </div>
+  <div class="slate" id="slate" aria-live="off">
+    <p class="slate-shot"><b id="slateNo">01</b><span id="slateTxt">Bare wafer, resist coated</span></p>
+    <div class="slate-bar"><span id="slateBar"></span></div>
+    <p class="slate-note" id="slateNote">Wafer and process scenes are illustrative.</p>
+    <div class="slate-ctl">
+      <button type="button" id="skipFilm">Skip</button>
+      <button type="button" id="replayFilm" hidden>Replay film</button>
+    </div>
+  </div>
+  <a class="cue" href="#about"><span class="cue-line"><i></i></span>Scroll into the die</a>
+</section>
 
-  <!-- 头部导航 -->
-  <header>
-    <div class="container">
-      <div class="navbar">
-        <a href="#" class="logo">约翰·多伊</a>
-        <nav class="nav-links">
-          <div class="container">
-            <div class="wrap">
-              <input
-                checked=""
-                type="radio"
-                id="rd-1"
-                name="radio"
-                class="rd-1"
-                hidden=""
-              />
-              <label for="rd-1" class="label" style="--index: 0;" data-section="home">
-                <span>首页</span>
-              </label>
+<!-- ============================================================ ABOUT -->
+<section class="about" id="about" data-pose="about" data-veil="0.62" aria-labelledby="about-title">
+  <div class="wrap about-grid">
+    <div class="about-copy">
+      <p class="tag" data-r>Profile</p>
+      <h2 id="about-title" class="statement" data-split>I write the RTL, prove it behaves, and take it down to layout.</h2>
+      <p class="lede" data-r>I am an M.Sc. student in the joint TUM–NTU Integrated Circuit Design programme in Singapore. The die behind this page is my own five-stage RV32I core, placed and routed with OpenROAD on Nangate45. The wafer around it is a rendering. Everything below is labelled the same way: what I built, what I reused, and where the evidence stops.</p>
+      <dl class="facts" data-r>
+        <div><dt>Now</dt><dd>M.Sc. Integrated Circuit Design, TUM &amp; NTU<br><small>Aug 2026 – Jul 2028 (expected), delivered through TUM Asia</small></dd></div>
+        <div><dt>Before</dt><dd>B.Sc. Electronic and Information Engineering, MUST<br><small>First Class Honours · ranked 4 / 43</small></dd></div>
+        <div><dt>Looking for</dt><dd>A credit-bearing internship from June 2027<br><small>9–12 months · RTL / ASIC design, IP, SoC integration or physical design</small></dd></div>
+      </dl>
+    </div>
+    <figure class="portrait" data-r>
+      <img src="assets/img/portrait.webp" width="1254" height="1086" alt="Portrait of Ruilin Tian" loading="lazy" decoding="async">
+      <figcaption><span>Ruilin Tian</span><span>Singapore</span></figcaption>
+    </figure>
+  </div>
+</section>
 
-              <input type="radio" id="rd-2" name="radio" class="rd-2" hidden="" />
-              <label for="rd-2" class="label" style="--index: 1;" data-section="about">
-                <span>关于我</span>
-              </label>
+<!-- ============================================================ RTL -->
+<section class="chapter" id="rtl" data-pose="rtl" data-veil="0.74" aria-labelledby="rtl-title">
+  <div class="wrap">
+    <header class="ch-head">
+      <p class="tag" data-r><b>01</b> RTL and verification · Jul 2026</p>
+      <h2 id="rtl-title" data-split>One ISA.<br><em>Two microarchitectures.</em></h2>
+      <p class="ch-deck" data-r>Single-cycle and five-stage SystemVerilog cores for a 37-instruction RV32I subset. They share the ALU, decoder and register file. The pipeline adds EX/MEM and MEM/WB forwarding, a WB-to-ID bypass, one-cycle load-use stalls and two-slot flushes on taken branches and jumps.</p>
+    </header>
 
-              <input type="radio" id="rd-3" name="radio" class="rd-3" hidden="" />
-              <label for="rd-3" class="label" style="--index: 2;" data-section="experience">
-                <span>经历</span>
-              </label>
-
-              <input type="radio" id="rd-4" name="radio" class="rd-4" hidden="" />
-              <label for="rd-4" class="label" style="--index: 3;" data-section="projects">
-                <span>项目</span>
-              </label>
-
-              <input type="radio" id="rd-5" name="radio" class="rd-5" hidden="" />
-              <label for="rd-5" class="label" style="--index: 4;" data-section="contact">
-                <span>联系</span>
-              </label>
-
-              <div class="bar"></div>
-              <div class="slidebar"></div>
-            </div>
+    <div class="panel pipe" id="pipe" data-r>
+      <div class="panel-head">
+        <p class="panel-title">Step the pipeline</p>
+        <div class="seg" role="tablist" aria-label="Program" id="pipeTabs"></div>
+      </div>
+      <div class="pipe-body">
+        <div class="pipe-grid-wrap"><div class="pipe-grid" id="pipeGrid" role="img" aria-label="Pipeline diagram"></div></div>
+        <aside class="pipe-side">
+          <p class="pipe-cycle"><span>Cycle</span><b id="pipeCycle">0</b><i id="pipeTotal">/ 0</i></p>
+          <p class="pipe-event" id="pipeEvent" aria-live="polite"></p>
+          <div class="pipe-ctl">
+            <button type="button" id="pipePrev" aria-label="Previous cycle">←</button>
+            <button type="button" id="pipePlay" class="primary">Run</button>
+            <button type="button" id="pipeNext" aria-label="Next cycle">→</button>
           </div>
-        </nav>
-        <div class="nav-controls">
-          <label class="bb8-toggle">
-            <input class="bb8-toggle__checkbox" type="checkbox" id="theme-switch">
-            <div class="bb8-toggle__container">
-              <div class="bb8-toggle__scenery">
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="bb8-toggle__star"></div>
-                <div class="tatto-1"></div>
-                <div class="tatto-2"></div>
-                <div class="gomrassen"></div>
-                <div class="hermes"></div>
-                <div class="chenini"></div>
-                <div class="bb8-toggle__cloud"></div>
-                <div class="bb8-toggle__cloud"></div>
-                <div class="bb8-toggle__cloud"></div>
-              </div>
-              <div class="bb8">
-                <div class="bb8__head-container">
-                  <div class="bb8__antenna"></div>
-                  <div class="bb8__antenna"></div>
-                  <div class="bb8__head"></div>
-                </div>
-                <div class="bb8__body"></div>
-              </div>
-              <div class="artificial__hidden">
-                <div class="bb8__shadow"></div>
-              </div>
-            </div>
-          </label>
-          <div id="language-switch" class="language-switch">中 / EN</div>
-          <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-        </div>
+          <p class="formula" id="pipeFormula"></p>
+        </aside>
       </div>
+      <p class="panel-note">A small model of the hazard rules, written for this page. The measured numbers below come from the RTL on Verilator.</p>
     </div>
-    <!-- 移动端菜单 -->
-    <div id="mobile-menu" class="mobile-menu">
-      <a href="#home" data-section="home">首页</a>
-      <a href="#about" data-section="about">关于我</a>
-      <a href="#experience" data-section="experience">经历</a>
-      <a href="#projects" data-section="projects">项目</a>
-      <a href="#contact" data-section="contact">联系</a>
-    </div>
-  </header>
 
-  <!-- 英雄部分 -->
-  <section id="home" class="hero">
-    <div class="container hero-container">
-      <div class="hero-content">
-        <h1>约翰·多伊</h1>
-        <p class="subtitle">开发者，设计师，创造者</p>
-        <div class="hero-buttons">
-          <a href="#contact" class="hero-btn primary" id="hero-contact-btn">
-            <div class="bright-particles"></div>
-            <span data-translate="hero.contact">联系我</span>
-          </a>
-          <a href="#" class="hero-btn secondary" id="resume-download-btn" data-resume-link="./resources/documents/resume.pdf">下载简历</a>
-        </div>
+    <div class="split">
+      <div class="panel bench" data-r>
+        <p class="panel-title">Same programs, both cores</p>
+        <p class="panel-sub">Cycles to retire each workload under a zero-wait memory model. The pipeline matches <code>C = N + 4 + L + 2R</code> exactly.</p>
+        <div class="bars" id="bars"></div>
+        <p class="panel-note">Cycle counts are not execution time. The pipeline spends more cycles and runs each one much faster; the clock comes from the layout below.</p>
       </div>
-      <div class="hero-image">
-        <img id="profile-pic" src="" alt="Profile picture">
+      <div class="panel proof" data-r>
+        <p class="panel-title">How it was checked</p>
+        <ul class="metrics">
+          <li><b data-count="74">74</b><span>cocotb cases passing across 17 Verilator targets</span></li>
+          <li><b data-count="64">64</b><span>generated programs compared against an independent Python RV32I interpreter after every retired instruction</span></li>
+          <li><b>94.2<small>%</small></b><span>line coverage, with 98.3% branch, 100% expression and 97.5% toggle</span></li>
+        </ul>
+        <p class="scope"><b>Scope.</b> No CSRs, exceptions or interrupts. External zero-wait memory. Every uncovered point is an unreachable default or a documented unsupported misaligned access.</p>
+        <a class="link" href="https://github.com/tianruilint/rv32i-processors" target="_blank" rel="noopener">RTL, tests and reports on GitHub</a>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- 关于部分 -->
-  <section id="about">
-    <div class="container">
-      <h2>关于我</h2>
-      <div class="about-content">
-        <div class="about-text">
-          <div class="about-text-card">
-            <p>我是一名充满热情的开发人员，专注于创建直观且响应式的网页应用。我热爱解决复杂问题并构建用户友好的界面。</p>
-            <p>作为一名全栈开发者，我擅长前端和后端技术，能够从概念到部署构建完整的应用程序。我注重代码质量和用户体验，始终追求最佳实践和创新解决方案。</p>
-          </div>
-        </div>
-        <div class="skills">
-          <div class="skills-grid">
-            <!-- 技能将通过JavaScript动态加载 -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- ============================================================ LAYOUT -->
+<section class="chapter" id="layout" data-pose="layout" data-veil="0.8" aria-labelledby="layout-title">
+  <div class="wrap">
+    <header class="ch-head">
+      <p class="tag" data-r><b>02</b> Physical implementation · OpenROAD · Nangate45</p>
+      <h2 id="layout-title" data-split>From RTL<br><em>to GDS.</em></h2>
+      <p class="ch-deck" data-r>The pipeline core goes through synthesis, floorplan, placement, clock-tree synthesis and routing. Routing is DRC-clean at every clock in the sweep and each routed netlist is formally equivalent to synthesis.</p>
+    </header>
 
-  <!-- 经历部分 -->
-  <section id="experience">
-    <div class="container">
-      <h2>经历</h2>
-      <div class="experience-tabs">
-        <!-- 标签将通过JavaScript动态加载 -->
+    <div class="viewer" data-r>
+      <div class="viewer-stage" id="viewerStage">
+        <img id="viewerImg" src="assets/layout/routing_1p4.webp" width="1100" height="1100" alt="Routed layout of the RV32I pipeline core at 1.4 ns" loading="lazy" decoding="async">
+        <div class="lens" id="lens" aria-hidden="true"></div>
+        <p class="viewer-hint">Move over the layout to magnify</p>
       </div>
-      <div class="experience-contents">
-        <!-- 内容将通过JavaScript动态加载 -->
+      <div class="viewer-side">
+        <div class="seg vert" role="tablist" aria-label="Layout view" id="viewerTabs"></div>
+        <label class="switch" id="sweepSwitch"><input type="checkbox" id="viewerOld"><span></span><em>Show the first sweep (625 MHz)</em></label>
+        <p class="viewer-cap" id="viewerCap"></p>
+        <p class="panel-note">Real tool output for <code>rv32i_pipeline_core</code>, 40% core utilisation.</p>
       </div>
     </div>
-  </section>
 
-  <!-- 项目部分 -->
-  <section id="projects">
-    <div class="container">
-      <h2>项目</h2>
-      <div class="projects-filter">
-        <!-- 筛选按钮将通过JavaScript动态加载 -->
+    <div class="story">
+      <div class="story-num" data-r>
+        <p><span>First sweep</span><b>625<small>MHz</small></b></p>
+        <i aria-hidden="true"></i>
+        <p class="hot"><span>After the RTL fix</span><b>714<small>MHz</small></b></p>
       </div>
-      <div class="projects-grid">
-        <!-- 项目卡片将通过JavaScript动态加载 -->
+      <div class="story-copy" data-r>
+        <h3>The limiting path was in my RTL, not in the flow.</h3>
+        <p>STA showed the EX branch redirect fanning out as <code>flush</code> to about 200 ID/EX flops, and a <code>reset</code> to <code>data_write_data</code> feed-through from gating the store data. I changed flush and bubble to clear only the valid and control bits, and reset to gate only the write enable. At 1.4 ns the worst slack moved from −0.006 to +0.005 ns.</p>
       </div>
     </div>
-  </section>
 
-  <!-- 联系部分 -->
-  <section id="contact">
-    <div class="container">
-      <h2 data-translate="navigation.contact">联系我</h2>
-      <div class="contact-container">
-        <div class="contact-info">
-          <div class="contact-info-card">
-            <div class="contact-item contact-email">
-              <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-              <div class="contact-details">
-                <h4>邮箱</h4>
-                <p>email@example.com</p>
-              </div>
-            </div>
-            <div class="contact-item contact-phone">
-              <div class="contact-icon"><i class="fas fa-phone"></i></div>
-              <div class="contact-details">
-                <h4>电话</h4>
-                <p>+1 234 567 890</p>
-              </div>
-            </div>
-            <div class="contact-item contact-location">
-              <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-              <div class="contact-details">
-                <h4>位置</h4>
-                <p>北京市，中国</p>
-              </div>
-            </div>
-            <div class="social-links">
-              <!-- 社交链接将通过JavaScript动态加载 -->
-            </div>
-          </div>
-        </div>
-        <div class="contact-form">
-          <div class="contact-form-card">
-            <!-- 联系表单将通过JavaScript动态加载 -->
-          </div>
-        </div>
+    <div class="panel sweep" id="sweep" data-r>
+      <div class="panel-head">
+        <p class="panel-title">Clock sweep</p>
+        <p class="sweep-state" id="sweepState"></p>
       </div>
+      <div class="sweep-plot" id="sweepPlot" aria-hidden="true"></div>
+      <input class="range" id="sweepRange" type="range" min="0" max="6" step="1" value="5" aria-label="Clock period">
+      <dl class="sweep-read" id="sweepRead"></dl>
+      <p class="panel-note">Single typical corner on the educational Nangate45 library with assumed I/O budgets. This is not a physical signoff, and power is the flow's default activity estimate.</p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- 页脚 -->
-  <footer>
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-logo">约翰·多伊</div>
-        <div class="footer-links">
-          <a href="#home">首页</a>
-          <a href="#about">关于我</a>
-          <a href="#experience">经历</a>
-          <a href="#projects">项目</a>
-          <a href="#contact">联系</a>
+<!-- ============================================================ SYSTEM -->
+<section class="chapter" id="system" data-pose="soc" data-veil="0.76" aria-labelledby="system-title">
+  <div class="wrap">
+    <header class="ch-head">
+      <p class="tag" data-r><b>03</b> SoC integration · Jul – Sep 2026</p>
+      <h2 id="system-title" data-split>When a core<br><em>meets a system.</em></h2>
+      <p class="ch-deck" data-r>A simulation SoC that runs bare-metal C on the open-source FRISCV RV32IM core. I added a DMA engine, an AXI-Lite-to-APB bridge, an APB timer, the top level and address map, the firmware and the verification environment.</p>
+    </header>
+
+    <div class="panel soc" id="soc" data-r>
+      <div class="panel-head">
+        <p class="panel-title">Follow one firmware run</p>
+        <p class="legend"><span class="mine">Written for this project</span><span class="up">Reused upstream IP</span><span class="model">Simulation model</span></p>
+      </div>
+      <div class="soc-body">
+        <div class="soc-svg" id="socSvg"></div>
+        <div class="soc-side">
+          <ol class="steps" id="socSteps"></ol>
+          <div class="soc-detail" id="socDetail" aria-live="polite"></div>
         </div>
-        <div class="footer-social">
-          <!-- 社交链接将通过JavaScript动态加载 -->
-        </div>
-        <div class="copyright">© 2025 约翰·多伊. 版权所有</div>
       </div>
     </div>
+
+    <div class="split wide-left">
+      <div class="panel bugs" data-r>
+        <p class="panel-title">Bugs found in the third-party RTL</p>
+        <p class="panel-sub">Stress-testing the system exposed defects in the reused CPU and cache. Each fix is a separate patch with a test that fails before and passes after. I reported six upstream.</p>
+        <ul class="buglist" id="bugList"></ul>
+        <p class="panel-note">Upstream status as of 8 Nov 2026.</p>
+      </div>
+      <div class="panel proof" data-r>
+        <p class="panel-title">Verification</p>
+        <ul class="metrics">
+          <li><b data-count="9">9</b><span>firmware-driven system scenarios on Verilator, with random wait states, backpressure and reset during DMA</span></li>
+          <li><b data-count="48">48</b><span>interrupt-versus-fault collision cases, plus 60 load/store-fault cases with younger instructions in flight</span></li>
+          <li><b>60<small>/60</small></b><span>runs of a UVM environment for the APB timer, catching all 5 injected RTL bugs</span></li>
+        </ul>
+        <figure class="evidence">
+          <button type="button" class="evidence-btn" id="waveBtn" aria-label="Enlarge the DMA waveform"><img src="assets/img/dma-waveform.webp" width="1800" height="994" alt="Measured AXI handshakes during a DMA copy with random RAM stalls" loading="lazy" decoding="async"></button>
+          <figcaption>Measured DMA traffic under independent RAM stalls, sampled from the simulation.</figcaption>
+        </figure>
+        <p class="scope"><b>Scope.</b> Simulation only. The 128-bit bus is the upstream single-beat AXI-Lite-style extension, not standard AXI4-Lite, and there are no bursts. No FPGA, synthesis or timing results for the SoC.</p>
+        <a class="link" href="https://github.com/tianruilint/rv32-dma-apb-soc" target="_blank" rel="noopener">Design notes and reports on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ EXPERIENCE -->
+<section class="chapter" id="experience" data-pose="exp" data-veil="0.74" aria-labelledby="exp-title">
+  <div class="wrap">
+    <header class="ch-head">
+      <p class="tag" data-r><b>04</b> Industry</p>
+      <h2 id="exp-title" data-split>Verification,<br><em>on a real team.</em></h2>
+    </header>
+    <article class="job" data-r>
+      <div class="job-meta">
+        <h3>SUPCON</h3>
+        <p>Software Development Intern<br>Hangzhou · Jun – Aug 2024</p>
+      </div>
+      <div class="job-body">
+        <p class="job-lede">Hired on a software headcount and seconded to the FPGA group from day one, to verify a prototype acquisition-control IP: a 32-bit APB3 register interface, a 16 × 16-bit sample FIFO and sticky, maskable interrupts.</p>
+        <ul>
+          <li>Turned my mentor's checklist and the module specification into test points: reset, register attributes, address errors, FIFO boundaries, full/empty collisions and W1C against new-event priority.</li>
+          <li>Built a self-checking Python/cocotb testbench with an APB driver, an independent reference model, a scoreboard and a protocol monitor that checks bus responses and the interrupt line every cycle.</li>
+          <li>Ran directed and seeded-random regressions on Questa, and wrote up a specification gap where clearing DATA_READY one cycle after a new sample can leave data unserviced.</li>
+          <li>Tested radar level gauges and mass flow meters, including measurements at the factory, and automated ERP import preparation in Python.</li>
+        </ul>
+      </div>
+    </article>
+    <div class="jobs-min" data-r>
+      <article><h3>Sugon</h3><p>DataAgent Product Assistant Intern · 2025</p><p>Python automation and LLM training-data pipelines.</p></article>
+      <article><h3>NetEase</h3><p>Low-Code Coach Intern · 2023</p><p>Application development, assessment material and technical coordination.</p></article>
+    </div>
+
+    <div class="tools" data-r>
+      <p class="tag">Toolchain</p>
+      <dl>
+        <div><dt>HDL and architecture</dt><dd>SystemVerilog · Verilog · RISC-V · AMBA APB3 · AXI4-Lite · DMA · FSMs</dd></div>
+        <div><dt>Verification</dt><dd>cocotb · scoreboards · SVA · mutation testing · Questa · VCS · Verilator · Icarus</dd></div>
+        <div><dt>Implementation</dt><dd>Design Compiler · Innovus · Virtuoso / Spectre · Yosys · OpenSTA / SDC · OpenROAD</dd></div>
+        <div><dt>Software</dt><dd>Python · pytest · C · RISC-V GCC · Make · Git · Linux</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CONTACT -->
+<section class="contact" id="contact" data-pose="end" data-veil="0.42" aria-labelledby="contact-title">
+  <div class="wrap">
+    <p class="tag" data-r><b>05</b> Contact</p>
+    <h2 id="contact-title" data-split>Available from<br><em>June 2027.</em></h2>
+    <p class="contact-deck" data-r>A 9–12 month, full-time, credit-bearing internship in RTL / ASIC design, IP development, SoC integration or physical design. I am also open to design verification roles and to a combined internship and Master's thesis, subject to university and company agreement.</p>
+    <div class="contact-row" data-r>
+      <a class="mail" href="mailto:tianruilint@gmail.com">tianruilint@gmail.com</a>
+      <button type="button" class="copy" id="copyMail"><span id="copyTxt">Copy address</span></button>
+    </div>
+    <p class="socials" data-r><a href="https://www.linkedin.com/in/ruilintian1115/" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/tianruilint" target="_blank" rel="noopener">GitHub</a></p>
+  </div>
+  <footer class="foot">
+    <span>© <span id="year">2026</span> Ruilin Tian</span>
+    <span>Wafer, optics and interconnect are rendered illustrations. The layout is real tool output.</span>
+    <a href="#top">Back to the wafer ↑</a>
   </footer>
+</section>
 
-  <!-- JavaScript -->
-  <script type="module" src="./js/main.js"></script>
+</main>
+
+<dialog class="zoom" id="zoom" aria-label="Enlarged figure"><button type="button" id="zoomClose" aria-label="Close">Close</button><img alt="" id="zoomImg"></dialog>
+
+<script src="vendor/gsap.min.js" defer></script>
+<script src="vendor/ScrollTrigger.min.js" defer></script>
+<script src="vendor/lenis.min.js" defer></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
